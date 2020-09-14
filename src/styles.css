@@ -3,12 +3,12 @@
 @import '~codemirror/theme/idea.css';
 @import '~codemirror/theme/material.css';
 @import '~codemirror/theme/cobalt.css';
-
+@import '~codemirror/theme/tomorrow-night-eighties.css';
 
 
 @import '~codemirror/addon/fold/foldgutter.css';
 @import '~codemirror/addon/lint/lint.css';
-/*
+
 body{
     background: url('assets/wp2972942.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -16,6 +16,6 @@ body{
     -o-background-size: cover;
     background-size: cover;
     }
-*/
+
     .CodeMirror { width: 500px;
   height: 500px; }

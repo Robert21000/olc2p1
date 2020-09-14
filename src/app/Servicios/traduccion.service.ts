@@ -12,6 +12,8 @@ export class TraduccionService {
   
   
   
+
+  
   grafica:string="";
   txtGrafica:string="";
   txtresult:string="";
