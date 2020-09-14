@@ -1,16 +1,4 @@
 
 const { ObjectUnsubscribedError } = require("rxjs");
-var miApi={
+const { Interface } = require("readline");
 
-
-
-SetRaiz:function getRaiz(node){
-
-    return node;
-}
-
-
-
-
-}
-module.exports.miApi=miApi;
