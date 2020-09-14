@@ -1,0 +1,50 @@
+
+<app-nav-bar></app-nav-bar>
+<div id="grafica" style="text-align: center;">
+</div>
+
+<div style="color: white;">
+    <h3></h3>
+
+</div>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-7" >
+        <ngx-codemirror
+        [(ngModel)]="content"
+         [options]="{
+           lineNumbers: true,
+           theme: 'cobalt',
+           mode: 'javascript'
+         }"
+       ></ngx-codemirror>
+       
+        <button  type  ="button" class="btn btn-success" (click)="Traducir()">Traducir</button>
+        <button  type  ="button" class="btn btn-danger" (click)="Graficar()">Graficar</button>   
+    </div>
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-4">
+        <ngx-codemirror
+        [(ngModel)]="salida"
+         [options]="{
+           lineNumbers: true,
+           theme: 'tomorrow-night-eighties',
+           mode: 'javascript'
+         }"
+       ></ngx-codemirror>
+ 
+        <button  type  ="button" class="btn btn-primary">Ejecutar</button>
+        
+    </div>
+
+</div>
+
+</div>
+
+<div class="container">
+<div class="row">
+    <app-arbol></app-arbol>
+</div>
+</div>
