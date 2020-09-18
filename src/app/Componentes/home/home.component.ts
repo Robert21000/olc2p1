@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {TraduccionService  } from "../../Servicios/traduccion.service";
+import { EjecucionService } from "../../Servicios/ejecucion.service";
+
 var parser = require('src/assets/1erJison/miGramatica.js');
 
 
@@ -13,9 +15,9 @@ export class HomeComponent implements OnInit {
 
   title = 'Proyecto 1';
    content:String;
-   salida:String;
+   salida:string;
 
-  constructor(private servTr:TraduccionService){
+  constructor(private servTr:TraduccionService,private servEj:EjecucionService){
 
   }
   
@@ -44,14 +46,17 @@ export class HomeComponent implements OnInit {
 
 
 Graficar(){
-   // this.servTr.Graficar(this.ast);
    this.ast = parser.parse(this.content);
    this.servTr.Graficar(this.ast);
 }
 
 
 
+Ejecutar(){
+  
+  this.servEj.Ejecucion(this.salida);
 
+}
 
 
 

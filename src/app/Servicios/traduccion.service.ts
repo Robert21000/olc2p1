@@ -13,7 +13,7 @@ export class TraduccionService {
   
   
 
-  
+
   grafica:string="";
   txtGrafica:string="";
   txtresult:string="";
@@ -43,7 +43,7 @@ export class TraduccionService {
         if(Nodo.nombre=="llDer"||Nodo.nombre=="llIzq"||Nodo.nombre=="mayor"||Nodo.nombre=="menor"||Nodo.nombre=="mayorq"||Nodo.nombre=="menorq"){
           this.txtGrafica+=Nodo.nodo+"[fillcolor =\"green\", style=\"filled,setlinewidth(2)\",shape = doublecircle,color=blue,fontsize=24,fontcolor=\"white\",label=\""+Nodo.nombre+"\"];\n";
         }else{
-          this.txtGrafica+=Nodo.nodo+"[fillcolor =\"green\", style=\"filled,setlinewidth(2)\",shape = doublecircle,color=blue,fontsize=24,fontcolor=\"white\",label=\""+Nodo.valor+"\"];\n";
+          this.txtGrafica+=Nodo.nodo+"[fillcolor =\"green\", style=\"filled,setlinewidth(2)\",shape = doublecircle,color=blue,fontsize=24,fontcolor=\"white\",label=\""+Nodo.nombre+"\"];\n";
         }
           
        // console.log(Nodo.nombre+"->"+Nodo.valor);
@@ -67,6 +67,7 @@ tbSimbolos=[];
 
 getResult(raiz,pila):string{
   this.txtresult="";
+  this.pilaResult=[];
   this.LenguajeTraducito(raiz,"",pila,"");
   for(let i=this.pilaResult.length-1;i>=0;i--){
       this.txtresult+=this.pilaResult[i];
@@ -127,8 +128,7 @@ llenarTabla(Nodo,idFun){
               }
             }
         }
-        
-        
+      
         break;
 
        case "BloqueIns":
@@ -156,125 +156,36 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
     case "instrucciones":
                 if(Nodo.hijos.length==2){
 
-                        if(bloqFun=="ini"){
-                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,"instrucciones");                 
-                          this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
+                        if(bloqFun=="ini"){                                           
+                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
+                          this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,"instrucciones");
                           this.pilaResult.push(stack[stack.length-1]);
                           stack.pop();
                          
                         }else{
-                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);                 
+                          //stack[stack.length-1]+="\t";
+                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun); 
+                                        
                           this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
 
                         }
                 
 
                       }else if(Nodo.hijos.length==1){
+                       // stack[stack.length-1]+="\t";
                         this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-                       
+                        
                 }       
                 break;
     case "instruccion":
-                if(Nodo.hijos[0].nombre=="Rlet"){
-                      if(Nodo.hijos.length==8){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[5].valor;
-                          this.LenguajeTraducito(Nodo.hijos[6],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[7].valor+"\n";
+                if(Nodo.hijos[0].nombre=="DecLet"){
+                  this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);                     
 
-                      }else if(Nodo.hijos.length==7){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[4].valor;
-                          this.LenguajeTraducito(Nodo.hijos[5],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[6].valor+"\n";
-
-                      }else if(Nodo.hijos.length==6){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[5].valor+"\n";
-
-                      }else if(Nodo.hijos.length==5){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[4].valor+"\n";
-
-                      }else if(Nodo.hijos.length==3){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor+"\n";
-                      }
-
-                }else if(Nodo.hijos[0].nombre=="Rconst"){
-                      if(Nodo.hijos.length==8){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[5].valor;
-                          this.LenguajeTraducito(Nodo.hijos[6],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[7].valor+"\n";
-                      }else if(Nodo.hijos.length==7){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[4].valor;
-                          this.LenguajeTraducito(Nodo.hijos[5],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[6].valor+"\n";
-
-                      }else if(Nodo.hijos.length==5){
-                          stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
-                          this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[4].valor+"\n";
-
-                      }
+                }else if(Nodo.hijos[0].nombre=="DecConst"){
+                  this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);   
 
                 }else if(Nodo.hijos[0].nombre=="id"){
-                      if(Nodo.hijos.length==7){
-                          if(Nodo.hijos[2].nombre=="Rpop"){
-                              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor+Nodo.hijos[2].valor+Nodo.hijos[3].valor;
-                              this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
-                              stack[stack.length-1]+=Nodo.hijos[5].valor;
-                              stack[stack.length-1]+=Nodo.hijos[6].valor+"\n";
-                          }else if(Nodo.hijos[2].nombre=="Lparam"){
-
-                              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
-                              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                              stack[stack.length-1]+=Nodo.hijos[3].valor;
-                              stack[stack.length-1]+=Nodo.hijos[4].valor;
-                              stack[stack.length-1]+=Nodo.hijos[5].valor;
-                              stack[stack.length-1]+=Nodo.hijos[6].valor+"\n";
-
-                          }
-                          
-                      }else if(Nodo.hijos.length==6){
-
-                            stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
-                            stack[stack.length-1]+=Nodo.hijos[2].valor+Nodo.hijos[3].valor;
-                            stack[stack.length-1]+=Nodo.hijos[4].valor+Nodo.hijos[5].valor+"\n";    
-
-                      }else if(Nodo.hijos.length==5){
-                            let id=Nodo.hijos[0].valor;
-                            for(let item of this.tbSimbolos){
-                                  if(item.ambito==id){
-                                   if(item.padres!=""){
-                                      if(item.padres.includes(",")){
-                                        let lista=item.padres.split(",");
-                                        for(let i=lista.length-1;i>=0;i--){
-                                            id+="_"+lista[i];
-                                        }
-                                      }else{
-                                        id+="_"+item.padres;
-                                      }
-                                   }   
-                                  }
-
-                            }
-                            stack[stack.length-1]+=id+Nodo.hijos[1].valor;
-                            this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                            stack[stack.length-1]+=Nodo.hijos[3].valor+Nodo.hijos[4].valor+"\n";
-
-
-                      }else if(Nodo.hijos.length==4){
+                      if(Nodo.hijos.length==4){
                             if(Nodo.hijos[1].nombre=="pIzq"){
                               let id=Nodo.hijos[0].valor;
                               for(let item of this.tbSimbolos){
@@ -303,39 +214,30 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
 
                             }
 
+                      }else if(Nodo.hijos.length==5){
+                          let id=Nodo.hijos[0].valor;
+                          for(let item of this.tbSimbolos){
+                                if(item.ambito==id){
+                                if(item.padres!=""){
+                                    if(item.padres.includes(",")){
+                                        
+                                      let lista=item.padres.split(",");
+                                      for(let i=lista.length-1;i>=0;i--){
+                                          id+="_"+lista[i];
+                                      }
+                                    }else{
+                                      id+="_"+item.padres;
+                                    }
+                                }   
+                                }
+
+                          }
+                          stack[stack.length-1]+=id+Nodo.hijos[1].valor;
+                          this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+                          stack[stack.length-1]+=Nodo.hijos[3].valor+Nodo.hijos[4].valor+"\n";
                       }
 
-                }else if(Nodo.hijos[0].nombre=="Objeto"){
-                        if(Nodo.hijos.length==7){
-                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[1].valor+Nodo.hijos[2].valor+Nodo.hijos[3].valor;
-                          this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[5].valor;
-                          stack[stack.length-1]+=Nodo.hijos[6].valor+"\n"; 
-
-                        }else if(Nodo.hijos.length==6){
-                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[1].valor+Nodo.hijos[2].valor;
-                          stack[stack.length-1]+=Nodo.hijos[3].valor+Nodo.hijos[4].valor;
-                          stack[stack.length-1]+=Nodo.hijos[5].valor+"\n";  
-
-                        }else if(Nodo.hijos.length==4){
-                          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-                          stack[stack.length-1]+=Nodo.hijos[1].valor;
-                          this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);  
-                          stack[stack.length-1]+=Nodo.hijos[3].valor+"\n";
-                        }
-                }else if(Nodo.hijos[0].nombre=="Rtype"){
-                      //console.log(stack);
-                      //console.log("entra en type");
-                        stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor;
-                        stack[stack.length-1]+=Nodo.hijos[2].valor+Nodo.hijos[3].valor;
-                        this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);  
-                        stack[stack.length-1]+=Nodo.hijos[5].valor+"\n";                      
-                
-                }else if(Nodo.hijos[0].nombre=="Rfunction"){
-
-                     
+                }else if(Nodo.hijos[0].nombre=="Rfunction"){    
                           stack.push("");
                       if(Nodo.hijos.length==8){
                            let id_fun="";    
@@ -509,7 +411,14 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                         this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
                         stack[stack.length-1]+=Nodo.hijos[5].valor+Nodo.hijos[6].valor+"\n";
 
-                  }else if(Nodo.hijos[0].nombre=="Aumento"){  
+                  }else if(Nodo.hijos[0].nombre=="miconsole"){
+                        stack[stack.length-1]+=Nodo.hijos[0].valor;
+                        stack[stack.length-1]+=Nodo.hijos[1].valor;
+                        this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+                        stack[stack.length-1]+=Nodo.hijos[3].valor+Nodo.hijos[4].valor+"\n";
+
+                  }
+                  else if(Nodo.hijos[0].nombre=="Aumento"){  
                     this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
                     stack[stack.length-1]+=Nodo.hijos[1].valor+"\n";
                   }else if(Nodo.hijos[0].nombre=="Decremento"){
@@ -524,22 +433,6 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                   }      
 
                 break;
-
-    case "Objeto":
-               
-                  if(Nodo.hijos[0].nombre=="Objeto"){
-                    
-                    this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-                    stack[stack.length-1]+=Nodo.hijos[1].valor;
-                    stack[stack.length-1]+=Nodo.hijos[2].valor;
-                  }else if(Nodo.hijos[0].nombre=="id"){
-                    stack[stack.length-1]+=Nodo.hijos[0].valor;
-                    stack[stack.length-1]+=Nodo.hijos[1].valor;
-                    stack[stack.length-1]+=Nodo.hijos[2].valor;
-
-                  }
-
-          break;
     
     case "BloqueIns":
                   
@@ -572,7 +465,7 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
             this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
             stack[stack.length-1]+=Nodo.hijos[4].valor;
             this.LenguajeTraducito(Nodo.hijos[5],idFun,stack,bloqFun);
-            stack[stack.length-1]+="\n";
+            //stack[stack.length-1]+="\n";
                   
       break;
       
@@ -583,18 +476,17 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                   this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
                   stack[stack.length-1]+=Nodo.hijos[4].valor;
                   this.LenguajeTraducito(Nodo.hijos[5],idFun,stack,bloqFun);
-                  stack[stack.length-1]+="\n";
+                  
 
 
             }else if(Nodo.hijos.length==4){
                   stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor+Nodo.hijos[2].valor;
                   this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                  stack[stack.length-1]+="\n";
+                  
 
             }else if(Nodo.hijos.length==3){
                   stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
                   this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                  stack[stack.length-1]+="\n";
 
             }
         break; 
@@ -604,12 +496,12 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
               this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
               stack[stack.length-1]+=Nodo.hijos[1].valor+" "+Nodo.hijos[2].valor;
               this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-              this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
+              this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,"ciclo");
 
             }else if(Nodo.hijos.length==4){
               stack[stack.length-1]+=Nodo.hijos[0].valor+" "+Nodo.hijos[1].valor;
               this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-              this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
+              this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,"ciclo");
 
             }
       break;
@@ -622,43 +514,34 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
     
     case "Nelse":
           stack[stack.length-1]+=Nodo.hijos[0].valor;
-          this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
+          this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,"ciclo");
       break; 
     
     case "Ncase":
             if(Nodo.hijos.length==5){
               this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-              stack[stack.length-1]+=Nodo.hijos[1].valor;
+              stack[stack.length-1]+=Nodo.hijos[1].valor+" ";
               this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-              stack[stack.length-1]+=Nodo.hijos[3].valor;
-              this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
+              stack[stack.length-1]+=Nodo.hijos[3].valor+"\n";
+              this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,"ciclo");
 
             }else if(Nodo.hijos.length==4){
-              stack[stack.length-1]+=Nodo.hijos[0].valor;
+              stack[stack.length-1]+=Nodo.hijos[0].valor+" ";
               this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
-              stack[stack.length-1]+=Nodo.hijos[2].valor;
-              this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
+              stack[stack.length-1]+=Nodo.hijos[2].valor+"\n";
+              this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,"ciclo");
             }
       break;
 
     case "Ndefault":
             if(Nodo.hijos.length==3){
 
-              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
-              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor+"\n";
+              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,"ciclo");
 
             }
       break;
 
-    case "Arr":
-            if(Nodo.hijos.length==3){
-              this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-              stack[stack.length-1]+=Nodo.hijos[1].valor+Nodo.hijos[2].valor;
-              
-            }else if(Nodo.hijos.length==2){
-              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;  
-            }
-      break;
     
     case "Aumento":
 
@@ -680,7 +563,7 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
           this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
       break;
 
-    case "infor":
+    case "insfor":
             if(Nodo.hijos.length==3){
                   stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
                   this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
@@ -700,27 +583,67 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                     this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
             }
       break;
-
-    case "Decl":
-            if(Nodo.hijos.length==5){
-                  this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
-                  stack[stack.length-1]+=Nodo.hijos[1].valor+Nodo.hijos[2].valor;
-                  this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                  this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
-                  stack[stack.length-1]+="\n";
-            }else if(Nodo.hijos.length==4){
-                  stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
-                  this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                  this.LenguajeTraducito(Nodo.hijos[3],idFun,stack,bloqFun);
-                  stack[stack.length-1]+="\n";
-            }
-      break;
-
-
-    case "Separador":
-              stack[stack.length-1]+=Nodo.hijos[0].valor;
-      break;
     
+    case "DecLet":
+        stack[stack.length-1]+=Nodo.hijos[0].valor+" ";
+        this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
+        stack[stack.length-1]+=Nodo.hijos[2].valor+"\n";  
+      break;  
+    
+    case "Lasig":
+            if(Nodo.hijos.length==3){
+              this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
+              stack[stack.length-1]+=Nodo.hijos[1].valor;
+              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+
+            }else if(Nodo.hijos.length==1){
+              this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
+            }
+      break; 
+      
+    case "IA":
+            if(Nodo.hijos.length==5){
+              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
+              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+              stack[stack.length-1]+=Nodo.hijos[3].valor;
+              this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
+            }else if(Nodo.hijos.length==3){
+              stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
+              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+            }else if(Nodo.hijos.length==1){
+              stack[stack.length-1]+=Nodo.hijos[0].valor;
+            }
+
+      break; 
+      case "DecConst":
+        stack[stack.length-1]+=Nodo.hijos[0].valor;
+        this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
+        stack[stack.length-1]+=Nodo.hijos[2].valor+"\n";
+        break; 
+    
+      case "Lconst":
+            if(Nodo.hijos.length==3){
+              this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
+              stack[stack.length-1]+=Nodo.hijos[1].valor;
+              this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+            }else if(Nodo.hijos.length==1){
+              this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
+            }
+        break;
+        
+      case "CA":
+        if(Nodo.hijos.length==5){
+          stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
+          this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+          stack[stack.length-1]+=Nodo.hijos[3].valor;
+          this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
+        }else if(Nodo.hijos.length==3){
+          stack[stack.length-1]+=Nodo.hijos[0].valor+Nodo.hijos[1].valor;
+          this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+        }
+
+        break;  
+
     case "Ntipo":
             stack[stack.length-1]+=Nodo.hijos[0].valor;
       break;
@@ -735,34 +658,65 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
               this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun); 
             }
       break;
+      case "LLExp":
+        if(Nodo.hijos.length==3){
+          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
+          stack[stack.length-1]+=Nodo.hijos[1].valor;
+          this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+
+        }else if(Nodo.hijos.length==1){
+          this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun); 
+        }
+      break;
+      
     
     case "Exp":
             if(Nodo.hijos.length==1){
                   if(Nodo.hijos[0].nombre=="Objeto"){
                     this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
                   }else{
-                    stack[stack.length-1]+=Nodo.hijos[0].valor;
+                    if(Nodo.hijos[0].nombre=="cadena"){
+                      stack[stack.length-1]+="\""+Nodo.hijos[0].valor+"\"";
+                    }else if(Nodo.hijos[0].nombre=="cadenaSimple"){
+                      stack[stack.length-1]+="\'"+Nodo.hijos[0].valor+"\'";  
+                    }else{
+
+                      stack[stack.length-1]+=Nodo.hijos[0].valor;
+                    }
+                    
                   }
 
             }else if(Nodo.hijos.length==2){
               stack[stack.length-1]+=Nodo.hijos[0].valor;
               this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
             
-            }else if(Nodo.hijos.length==3){
+            }else if(Nodo.hijos.length==3){              
               if(Nodo.hijos[0].nombre=="Exp"){
 
                 this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
                 stack[stack.length-1]+=Nodo.hijos[1].valor;
-                this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);  
-              }else if(Nodo.hijos[0].nombre=="cIzq"){
-                  stack[stack.length-1]+=Nodo.hijos[0].valor;
-                  this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
-                  stack[stack.length-1]+=Nodo.hijos[2].valor;
-
+                this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);  
               }else if(Nodo.hijos[0].nombre=="id"){
                   
-                  stack[stack.length-1]+=Nodo.hijos[0].valor;
-                  stack[stack.length-1]+=Nodo.hijos[1].valor;
+                let id=Nodo.hijos[0].valor;
+                              for(let item of this.tbSimbolos){
+                                    if(item.ambito==id){
+                                     if(item.padres!=""){
+                                        if(item.padres.includes(",")){
+                                            
+                                          let lista=item.padres.split(",");
+                                          for(let i=lista.length-1;i>=0;i--){
+                                              id+="_"+lista[i];
+                                          }
+                                        }else{
+                                          id+="_"+item.padres;
+                                        }
+                                     }   
+                                    }
+  
+                              }  
+
+                  stack[stack.length-1]+=id+Nodo.hijos[1].valor;
                   stack[stack.length-1]+=Nodo.hijos[2].valor;
 
               }else if(Nodo.hijos[0].nombre=="Objeto"){ 
@@ -781,20 +735,29 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
               }
 
             }else if(Nodo.hijos.length==4){
-                  stack[stack.length-1]+=Nodo.hijos[0].valor;
-                  stack[stack.length-1]+=Nodo.hijos[1].valor;
+              let id=Nodo.hijos[0].valor;
+              for(let item of this.tbSimbolos){
+                    if(item.ambito==id){
+                    if(item.padres!=""){
+                        if(item.padres.includes(",")){
+                            
+                          let lista=item.padres.split(",");
+                          for(let i=lista.length-1;i>=0;i--){
+                              id+="_"+lista[i];
+                          }
+                        }else{
+                          id+="_"+item.padres;
+                        }
+                    }   
+                    }
+
+              }
+                  stack[stack.length-1]+=id+Nodo.hijos[1].valor;
                   this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
                   stack[stack.length-1]+=Nodo.hijos[3].valor;
 
             }else if(Nodo.hijos.length==5){
-                    if(Nodo.hijos[0].nombre=="id"){
-                      stack[stack.length-1]+=Nodo.hijos[0].valor;
-                      stack[stack.length-1]+=Nodo.hijos[1].valor;
-                      stack[stack.length-1]+=Nodo.hijos[2].valor;
-                      stack[stack.length-1]+=Nodo.hijos[3].valor;
-                      stack[stack.length-1]+=Nodo.hijos[4].valor;
-
-                    }else if(Nodo.hijos[0].nombre=="Exp"){
+                    if(Nodo.hijos[0].nombre=="Exp"){
                       this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
                       stack[stack.length-1]+=Nodo.hijos[1].valor;
                       this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
@@ -802,13 +765,6 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                       this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
                     }
 
-            }else if(Nodo.hijos.length==6){
-                  stack[stack.length-1]+=Nodo.hijos[0].valor;
-                  stack[stack.length-1]+=Nodo.hijos[1].valor;
-                  this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                  stack[stack.length-1]+=Nodo.hijos[3].valor;
-                  stack[stack.length-1]+=Nodo.hijos[4].valor;
-                  stack[stack.length-1]+=Nodo.hijos[5].valor;
             }    
       break;
     
