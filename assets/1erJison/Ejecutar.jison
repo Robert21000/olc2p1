@@ -2041,6 +2041,15 @@ Exp:
 	|cadena
 	{
 		var lista=[];
+		if($1.includes("\\n")){
+			$1=$1.replace("\\n","\n");
+		}
+		if($1.includes("\\r")){
+			$1=$1.replace("\\r","\r");
+		}
+		if($1.includes("\\t")){
+			$1=$1.replace("\\t","\t");
+		}
 		lista.push({nombre:"cadena",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
 		idg++;		
 		var Exp={
@@ -2055,6 +2064,15 @@ Exp:
 	|cadenaSimple
 	{
 		var lista=[];
+		if($1.includes('\\n')){
+			$1=$1.replace('\\n','\n');
+		}
+		if($1.includes('\\r')){
+			$1=$1.replace('\\r','\r');
+		}
+		if($1.includes('\\t')){
+			$1=$1.replace('\\t','\t');
+		}
 		lista.push({nombre:"cadenaSimple",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
 		idg++;		
 		var Exp={

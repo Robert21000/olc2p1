@@ -1903,6 +1903,15 @@ break;
 case 104:
 
 		var lista=[];
+		if($$[$0].includes("\\n")){
+			$$[$0]=$$[$0].replace("\\n","\n");
+		}
+		if($$[$0].includes("\\r")){
+			$$[$0]=$$[$0].replace("\\r","\r");
+		}
+		if($$[$0].includes("\\t")){
+			$$[$0]=$$[$0].replace("\\t","\t");
+		}
 		lista.push({nombre:"cadena",tipo:"terminal",nodo:"nodo"+idg,valor:$$[$0]});
 		idg++;		
 		var Exp={
@@ -1918,6 +1927,15 @@ break;
 case 105:
 
 		var lista=[];
+		if($$[$0].includes('\\n')){
+			$$[$0]=$$[$0].replace('\\n','\n');
+		}
+		if($$[$0].includes('\\r')){
+			$$[$0]=$$[$0].replace('\\r','\r');
+		}
+		if($$[$0].includes('\\t')){
+			$$[$0]=$$[$0].replace('\\t','\t');
+		}
 		lista.push({nombre:"cadenaSimple",tipo:"terminal",nodo:"nodo"+idg,valor:$$[$0]});
 		idg++;		
 		var Exp={
