@@ -8,9 +8,21 @@ var parser = require('./hoja5');
 
 
 });*/
+objeto={return:"return"}
+/*
 try {
     parser.parse("if(14==21)");    
 } catch (error) {
     console.log(error);
-}
+}*/
+console.log(objeto);
 
+
+let dato=1;
+while(dato<5){
+
+    
+        console.log("paso");
+    
+    dato++;
+}
