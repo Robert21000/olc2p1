@@ -92,7 +92,7 @@ RecogerFunciones(Nodo){
                   let tipo=Nodo.hijos[6].valor;
                   this.RecogerFunciones(Nodo.hijos[3]);
                   
-                  this.tbGlobal.tabla.push({nombre:id,tipo:tipo,valor:"",rol:"funcion",parametros:Nodo.hijos[3].parametros,valores:null,nodo:Nodo});
+                  this.tbGlobal.tabla.push({nombre:id,tipo:tipo,valor:"",rol:"funcion",parametros:Nodo.hijos[3].parametros,valores:null,nodo:Nodo,return:""});
                   
 
                 }else if(Nodo.hijos.length==7){
@@ -100,17 +100,17 @@ RecogerFunciones(Nodo){
                   this.RecogerFunciones(Nodo.hijos[5]);
                   let tipo=Nodo.hijos[5].valor;
                   let parametros=[];
-                  this.tbGlobal.tabla.push({nombre:id,tipo:tipo,valor:"",rol:"funcion",parametros:parametros,valores:null,nodo:Nodo});
+                  this.tbGlobal.tabla.push({nombre:id,tipo:tipo,valor:"",rol:"funcion",parametros:parametros,valores:null,nodo:Nodo,return:""});
  
                 }else if(Nodo.hijos.length==6){
                   let id=Nodo.hijos[1].valor;
                   this.RecogerFunciones(Nodo.hijos[3]);
-                  this.tbGlobal.tabla.push({nombre:id,tipo:"",valor:"",rol:"funcion",parametros:Nodo.hijos[3].parametros,valores:null,nodo:Nodo});
+                  this.tbGlobal.tabla.push({nombre:id,tipo:"",valor:"",rol:"funcion",parametros:Nodo.hijos[3].parametros,valores:null,nodo:Nodo,return:""});
 
                 }else if(Nodo.hijos.length==5){
                   let id=Nodo.hijos[1].valor;
                   let parametros=[];
-                  this.tbGlobal.tabla.push({nombre:id,tipo:"",valor:"",rol:"funcion",parametros:parametros,valores:null,nodo:Nodo}); 
+                  this.tbGlobal.tabla.push({nombre:id,tipo:"",valor:"",rol:"funcion",parametros:parametros,valores:null,nodo:Nodo,return:""}); 
                 }
                 
               }
@@ -159,23 +159,29 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
             if(Nodo.hijos.length==2){
               
               if(Nodo.hijos[0].hijos[0].nombre!="Rfunction"){
-                 
-                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,Nodo,tbs);
-              }
 
-
-             // console.log("return "+Nodo.return);
-              if(Nodo.return=="return"){
-              }else{
-               // console.log("iones");  
-                  this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);              
+                    console.log("idfun 2"+idFun);
+                    console.log("tiene return 2"+this.TieneReturn(idFun));
+                      if(!this.TieneReturn(idFun)){
+                        this.Visitar(Nodo.hijos[0],idFun,tipoFun,Nodo,tbs);
+                      }
               }
+                  if(!this.TieneReturn(idFun)){
+                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+                  }
+                                
               
 
             }else if(Nodo.hijos.length==1){
                 
               if(Nodo.hijos[0].hijos[0].nombre!="Rfunction"){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,null,tbs);
+
+                console.log("idfun 1"+idFun);
+                    console.log("tiene return 1"+this.TieneReturn(idFun));
+                if(!this.TieneReturn(idFun)){
+                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,null,tbs);
+                }
+                
               }
               
             }
@@ -242,12 +248,13 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                 }
               
               }else if(Nodo.hijos[0].nombre=="Rfunction"){
-                    console.log("paso? en fucnion?");
+                   
                     if(Nodo.hijos.length==8){
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
-                      //this.Visitar(Nodo.hijos[3],id,tipoFun,siguiente,tbsLocal);
+
+                      this.setIniReturn(id);
                       for(let item of this.tbGlobal.tabla){
                             if(item.nombre==id){
                                for(let i=0;i<item.parametros.length;i++){
@@ -269,6 +276,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
+                      this.setIniReturn(id);
                       this.Visitar(Nodo.hijos[5],id,tipoFun,siguiente,tbsLocal);
                       let tipo=Nodo.hijos[5].valor;
                       this.Visitar(Nodo.hijos[6],id,tipo,siguiente,tbsLocal);
@@ -278,6 +286,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
                       //this.Visitar(Nodo.hijos[3],id,tipoFun,siguiente,tbsLocal);
+                      this.setIniReturn(id);
                       for(let item of this.tbGlobal.tabla){
                         if(item.nombre==id){
                            for(let i=0;i<item.parametros.length;i++){
@@ -292,10 +301,11 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       this.Visitar(Nodo.hijos[5],id,"",siguiente,tbsLocal); 
 
                     }else if(Nodo.hijos.length==5){
-                      console.log("paso por aca funcion");
+                   
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
+                      this.setIniReturn(id);
                       this.Visitar(Nodo.hijos[4],id,"",siguiente,tbsLocal);
 
                     }
@@ -303,10 +313,11 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
                 if(Nodo.hijos.length==2){
                     if(idFun!=""){
-                      if(siguiente!=null){
+                      /*if(siguiente!=null){
                         siguiente.return="return";
                        
-                      }
+                      }*/
+                      this.setReturn(idFun);
                     }else{
                       this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n";  
                     }
@@ -314,14 +325,19 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                 }else if(Nodo.hijos.length==3){
 
                   if(idFun!=""){
-                        console.log("entro en return=¿¿");
+                       
                       let val=this.getExp(Nodo.hijos[1],siguiente,tbs).val;
                       let tipo=this.getExp(Nodo.hijos[1],siguiente,tbs).tip;
-                      this.asignarFuncion(idFun,tipoFun,val,tipo);
-                      if(siguiente!=null){
-                        siguiente.return="return";
-                        
+                      for(let item of this.tbGlobal.tabla){
+                        console.log("fucnion "+item.nombre+" rol "+item.rol+" return"+item.return);
+                    }
+                      this.setReturn(idFun);
+                      for(let item of this.tbGlobal.tabla){
+                          console.log("fucnion "+item.nombre+" rol "+item.rol+" return"+item.return);
                       }
+                      this.asignarFuncion(idFun,tipoFun,val,tipo);
+
+                     
                       
                   }else{
 
@@ -340,12 +356,12 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                             let tabla=[];
                             let tbsLocal={tabla:tabla,padre:tbs};
 
-                            this.Visitar(Nodo.hisjos[2],idFun,tipoFun,siguiente,tbsLocal);
+                            this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
 
                       }
 
                   }else if(Nodo.hijos.length==4){
-                    console.log("paso if 4");
+                    
                     this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
                     if(Nodo.hijos[1].res=="si"){
 
@@ -735,6 +751,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
        case "Lparam":
          if(Nodo.hijos.length==3){
          // console.log("paso Lparam 3");
+         Nodo.valores=[];
           this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);  
           for(let item of Nodo.hijos[0].valores){
               Nodo.valores.push(item);
@@ -742,6 +759,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
           Nodo.valores.push({valor:this.getExp(Nodo.hijos[2],siguiente,tbs).val,tipo:this.getExp(Nodo.hijos[2],siguiente,tbs).tip});  
           
          }else if(Nodo.hijos.length==1){
+           Nodo.valores=[];
           Nodo.valores.push({valor:this.getExp(Nodo.hijos[0],siguiente,tbs).val,tipo:this.getExp(Nodo.hijos[0],siguiente,tbs).tip});
           }
          break; 
@@ -801,7 +819,7 @@ asignarIdcnTipo(id,tipo,rol,tbs){
 
 
  asignarIdcnTipocnExp(id,tipo,valor,rol,tbs){
-  console.log("entro para declarar i "+id+" con valor "+valor);
+  
   tbs.tabla.push({nombre:id,tipo:tipo,valor:valor,rol:rol});
   
  }
@@ -989,6 +1007,9 @@ getExp(Exp,siguiente,tb){
       for(let i=0; i< this.tbGlobal.tabla.length;i++){
         if(id==this.tbGlobal.tabla[i].nombre&&this.tbGlobal.tabla[i].rol=="funcion"){
           this.tbGlobal.tabla[i].valores=Exp.hijos[2].valores;
+          //console.log("parametros: "+this.tbGlobal.tabla[i].parametros.length);
+          //console.log("valores: "+Exp.hijos[2].valores.length);
+
           if(this.tbGlobal.tabla[i].parametros.length==Exp.hijos[2].valores.length){
             let diferente=false;
             for(let j=0;j<this.tbGlobal.tabla[i].parametros.length;j++){
@@ -1246,6 +1267,42 @@ getExp(Exp,siguiente,tb){
     }
 
 }
+
+
+
+
+setIniReturn(id){
+  for(let i=0;i<this.tbGlobal.tabla.length;i++){
+      if(this.tbGlobal.tabla[i].nombre==id&&this.tbGlobal.tabla[i].rol=="funcion"){
+              this.tbGlobal.tabla[i].return="";
+      }
+  }
+}
+
+setReturn(id){
+  for(let i=0;i<this.tbGlobal.tabla.length;i++){
+      if(this.tbGlobal.tabla[i].nombre==id&&this.tbGlobal.tabla[i].rol=="funcion"){
+              this.tbGlobal.tabla[i].return="return";
+      }
+  }
+}
+
+TieneReturn(id){
+   let esta=false;
+   for(let i=0;i<this.tbGlobal.tabla.length;i++){
+    if(this.tbGlobal.tabla[i].nombre==id&&this.tbGlobal.tabla[i].rol=="funcion"){
+              console.log("");
+            if(this.tbGlobal.tabla[i].return=="return"){
+                esta=true;
+                break;
+            }
+    }
+    
+} 
+return esta;
+}
+
+
 
 
 
