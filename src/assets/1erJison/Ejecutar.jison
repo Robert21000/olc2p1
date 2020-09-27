@@ -9,9 +9,6 @@ function imprimir(nombre){
 }*/
 %{
 
-import { Declaracionlet } from "../Clases/DeclaracionLet";
-import {Operacion } from "../Clases/Operacion";
-
 var listaErrores=[];
 var idg=0;
 
@@ -88,7 +85,7 @@ id						[a-zA-Z]+("_"|[a-zA-AZ]|[0-9])*\b;
 "&&"				return 'and';
 
 
-'console.log'		return 'miconsole';
+//'console.log'		return 'miconsole';
 "null"				return 'Rnull';
 "break"				return 'Rbreak';
 "return"			return 'Rreturn';
@@ -198,6 +195,7 @@ instrucciones:  instruccion instrucciones
 			nombre:"instrucciones",
 			tipo:"noterminal",
 			nodo:"nodo"+idg,
+			return:"",
 			hijos:lista
 		}
 		idg++;
@@ -679,27 +677,7 @@ instruccion:
 				idg++;
 				$$=instruccion;
 			}
-		|miconsole pIzq LLExp pDer ptycoma
-			{
-				var lista=[];
-				lista.push({nombre:"miconsole",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
-				idg++;
-				lista.push({nombre:"pIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
-				idg++;
-				lista.push($3);
-				lista.push({nombre:"pDer",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
-				idg++;
-				lista.push({nombre:"ptycoma",tipo:"terminal",nodo:"nodo"+idg,valor:$5});
-				idg++;
-				var instruccion={
-					nombre:"instruccion",
-					tipo:"noterminal",	
-					nodo:"nodo"+idg,
-					hijos:lista
-				}
-				idg++;
-				$$=instruccion;	
-			}
+		
 		|Aumento	ptycoma												//id++
 			{
 				var lista=[];
@@ -943,7 +921,9 @@ NelseIf:
 	{
 		var lista=[];
 		lista.push($1);
-		lista.push($2);
+		//lista.push($2);
+		lista.push({nombre:"Relse",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		idg++;
 		lista.push({nombre:"Rif",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
 		idg++;
 		lista.push($4);
@@ -953,6 +933,7 @@ NelseIf:
 			nombre:"NelseIf",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			res:"",
 			hijos:lista
 		}
 		idg++;
@@ -993,6 +974,7 @@ Condicion:
 			nombre:"Condicion",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			res:"",
 			hijos:lista
 		}
 		idg++;
@@ -1261,11 +1243,12 @@ Param:
 		lista.push({nombre:"dosP",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
 		idg++;
 		lista.push($5);
-
+		var parametros=[];
 		var Param={
 			nombre:"Param",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			parametros:parametros,
 			hijos:lista
 		}
 		idg++;
@@ -1279,11 +1262,12 @@ Param:
 		lista.push({nombre:"dosP",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
 		idg++;
 		lista.push($3);
-
+		var parametros=[];
 		var Param={
 			nombre:"Param",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			parametros:parametros,
 			hijos:lista
 		}
 		idg++;
@@ -1519,6 +1503,7 @@ Ntipo:
 			nombre:"Ntipo",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			valor:"",
 			hijos:lista
 		}
 		idg++;
@@ -1699,11 +1684,12 @@ LLExp:
 		lista.push({nombre:"coma",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
 		idg++;
 		lista.push($3);
-				
+		var valores=[];
 		var Lparam={
 			nombre:"Lparam",
 			tipo:"noterminal",
-			nodo:"nodo"+idg,	
+			nodo:"nodo"+idg,
+			valores:valores,	
 			hijos:lista
 		}
 		idg++;
@@ -1712,11 +1698,13 @@ LLExp:
 	|Exp
 	{
 		var lista=[];
-		lista.push($1);				
+		lista.push($1);
+		var valores=[];				
 		var Lparam={
 			nombre:"Lparam",
 			tipo:"noterminal",
-			nodo:"nodo"+idg,	
+			nodo:"nodo"+idg,
+			valores:valores,	
 			hijos:lista
 		}
 		idg++;

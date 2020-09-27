@@ -42,7 +42,18 @@
 </div>
 
 </div>
-
+<div class="container">
+  <div class="row">
+    <ngx-codemirror
+    [(ngModel)]="consola"
+     [options]="{
+       lineNumbers: true,
+       theme: 'tomorrow-night-eighties',
+       mode: 'javascript'
+     }"
+   ></ngx-codemirror>
+  </div>
+  </div>
 <div class="container">
 <div class="row">
     <app-arbol></app-arbol>

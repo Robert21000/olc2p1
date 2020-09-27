@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   title = 'Proyecto 1';
    content:String;
    salida:string;
+   consola:string;
 
   constructor(private servTr:TraduccionService,private servEj:EjecucionService){
 
@@ -53,12 +54,11 @@ Graficar(){
 
 
 Ejecutar(){
-  
+  this.consola="";
   this.servEj.Ejecucion(this.salida);
-
+  this.consola=this.servEj.getImprimir();
+  
 }
-
-
 
 
 
