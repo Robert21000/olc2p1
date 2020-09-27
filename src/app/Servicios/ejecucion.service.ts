@@ -32,8 +32,16 @@ try {
   this.ast=parser.parse(entrada);
   if(this.ast.nombre!="error"){
      this.txtImprimir="";
+     this.tbsimbolos=[];
+     this.tbGlobal={tabla:this.tbsimbolos,padre:null};
       this.RecogerFunciones(this.ast);
        this.Visitar(this.ast,"","",null,this.tbGlobal);
+       for(let item of this.tbGlobal.tabla){
+            console.log("nombre: "+item.nombre+" valor: "+item.valor+" tipo: "+item.tipo+" rol: "+item.rol);
+            console.log(item.nodo.nombre)
+            console.log(item.parametros);
+
+       }
   }else{
 
     this.listaErrores=this.ast.lista;
@@ -149,17 +157,17 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
           break;
         case "instrucciones":
             if(Nodo.hijos.length==2){
-              console.log("iones");
-              if(Nodo.hijos[1].hijos[0].nombre!="Rfunction"){
-                  console.log("ion");
+              
+              if(Nodo.hijos[0].hijos[0].nombre!="Rfunction"){
+                 
                   this.Visitar(Nodo.hijos[0],idFun,tipoFun,Nodo,tbs);
               }
 
 
-              console.log("return "+Nodo.return);
+             // console.log("return "+Nodo.return);
               if(Nodo.return=="return"){
               }else{
-                console.log("iones");  
+               // console.log("iones");  
                   this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);              
               }
               
@@ -181,9 +189,10 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
               }else if(Nodo.hijos[0].nombre=="id"){
                 if(Nodo.hijos.length==4){
                    if(Nodo.hijos[1].nombre=="igual"){
+                     console.log("paso en asignacion");
                         let id=Nodo.hijos[0].valor;
-                        let valor=this.getExp(Nodo.hijos[2],tbs).val;
-                        let tipo=this.getExp(Nodo.hijos[2],tbs).tip; 
+                        let valor=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
+                        let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip; 
                         if(this.existeId(id,tbs)){
                           this.asignarExp(id,tipo,valor,tbs);
                         }else{
@@ -233,7 +242,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                 }
               
               }else if(Nodo.hijos[0].nombre=="Rfunction"){
-
+                    console.log("paso? en fucnion?");
                     if(Nodo.hijos.length==8){
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
@@ -283,6 +292,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       this.Visitar(Nodo.hijos[5],id,"",siguiente,tbsLocal); 
 
                     }else if(Nodo.hijos.length==5){
+                      console.log("paso por aca funcion");
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
@@ -291,26 +301,26 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                     }
               }else if(Nodo.hijos[0].nombre=="Rreturn"){
 
-                if(Nodo.hijos.length==1){
+                if(Nodo.hijos.length==2){
                     if(idFun!=""){
                       if(siguiente!=null){
                         siguiente.return="return";
-                        this.Visitar(siguiente.hijos[1],"","",null,this.tbGlobal);
+                       
                       }
                     }else{
                       this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n";  
                     }
 
-                }else if(Nodo.hijos.length==2){
+                }else if(Nodo.hijos.length==3){
 
                   if(idFun!=""){
-
-                      let val=this.getExp(Nodo.hijos[1],tbs).val;
-                      let tipo=this.getExp(Nodo.hijos[1],tbs).tip;
+                        console.log("entro en return=¿¿");
+                      let val=this.getExp(Nodo.hijos[1],siguiente,tbs).val;
+                      let tipo=this.getExp(Nodo.hijos[1],siguiente,tbs).tip;
                       this.asignarFuncion(idFun,tipoFun,val,tipo);
                       if(siguiente!=null){
                         siguiente.return="return";
-                        this.Visitar(siguiente.hijos[1],"","",null,this.tbGlobal);
+                        
                       }
                       
                   }else{
@@ -372,7 +382,9 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
                     let tabla=[];
                     let tbsLocal={tabla:tabla,padre:tbs};
+                
                     this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+                    
                     while(Nodo.hijos[1].res=="si"){
                       this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
                       this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs); 
@@ -389,19 +401,20 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
               }else if(Nodo.hijos[0].nombre=="Rfor"){
                     if(Nodo.hijos.length==9){
-                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
-
-                      while(this.getExp(Nodo.hijos[4],tbs).val){
-                          this.Visitar(Nodo.hijos[6],idFun,tipoFun,siguiente,tbs);
-                          let tabla=[];
-                          let tbsLocal={tabla:tabla,padre:tbs};
-                          this.Visitar(Nodo.hijos[8],idFun,tipoFun,siguiente,tbsLocal);
+                      
+                      let tabla=[];
+                      let tbsLocal={tabla:tabla,padre:tbs};
+                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
+                        while(this.getExp(Nodo.hijos[4],siguiente,tbsLocal).val){
+                        this.Visitar(Nodo.hijos[8],idFun,tipoFun,siguiente,tbsLocal);
+                        this.Visitar(Nodo.hijos[6],idFun,tipoFun,siguiente,tbsLocal);
+                        
                       }
                     }
                     
               }else if(Nodo.hijos[0].nombre=="Rconsole"){
                     console.log("console")
-                    let valor=this.getExp(Nodo.hijos[4],tbs).val;
+                    let valor=this.getExp(Nodo.hijos[4],siguiente,tbs).val;
                     this.txtImprimir+=valor+"\n"; 
               }else if(Nodo.hijos[0].nombre=="Aumento"){
                   this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
@@ -431,11 +444,11 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
        case "IA":
          if(Nodo.hijos.length==1){
             let id=Nodo.hijos[0].valor;
-            if(!this.existeId(id,tbs)){
+            if(!this.existeEnMiAmbito(id,tbs)){
               this.asignarId(id,"let",tbs);
             }else{
 
-               this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n"; 
+               this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada  en este ambito \n"; 
             }
          }else if(Nodo.hijos.length==3){
 
@@ -443,7 +456,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                 let id=Nodo.hijos[0].valor;
                 this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
                 let tipo=Nodo.hijos[2].valor;
-                 if(!this.existeId(id,tbs)){
+                 if(!this.existeEnMiAmbito(id,tbs)){
                     this.asignarIdcnTipo(id,tipo,"let",tbs);
                  }else{
     
@@ -451,9 +464,10 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                  }
               }else if(Nodo.hijos[1].nombre=="igual"){
                  let id = Nodo.hijos[0].valor;
-                 let val=this.getExp(Nodo.hijos[2],tbs).val;
-                 let tipo=this.getExp(Nodo.hijos[2],tbs).tip;
-                if(!this.existeId(id,tbs)){
+                 let val=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
+                 let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
+                 //console.log("id "+id+" val: "+val+" tipo: "+tipo);
+                if(!this.existeEnMiAmbito(id,tbs)){
                   this.asignarIdcnTipocnExp(id,tipo,val,"let",tbs);
                 }else{
 
@@ -466,10 +480,10 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
             let id=Nodo.hijos[0].valor;
             this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
             let tipo=Nodo.hijos[2].valor;
-            let valor=this.getExp(Nodo.hijos[4],tbs).val;
-            let otrotipo=this.getExp(Nodo.hijos[4],tbs).tip;
+            let valor=this.getExp(Nodo.hijos[4],siguiente,tbs).val;
+            let otrotipo=this.getExp(Nodo.hijos[4],siguiente,tbs).tip;
 
-            if(!this.existeId(id,tbs)){
+            if(!this.existeEnMiAmbito(id,tbs)){
               if(otrotipo==tipo){
                 this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
               }else{
@@ -505,9 +519,9 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
     case "CA":
       if(Nodo.hijos.length==3){
         let id=Nodo.hijos[0].valor;
-        let tipo=this.getExp(Nodo.hijos[2],tbs).tip;
-        let valor=this.getExp(Nodo.hijos[2],tbs).val;
-        if(!this.existeId(id,tbs)){
+        let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
+        let valor=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
+        if(!this.existeEnMiAmbito(id,tbs)){
           this.asignarIdcnTipocnExp(id,tipo,valor,"const",tbs);
         }else{
           this.txtImprimir+="Error Semantico, la constante:" +id+" ya se encuentra declarada en este ambito \n";
@@ -519,9 +533,9 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
         let id=Nodo.hijos[0].valor;
         this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
         let tipo=Nodo.hijos[2].valor
-        let valor=this.getExp(Nodo.hijos[4],tbs).val;
-        let otrotipo=this.getExp(Nodo.hijos[4],tbs).tip;
-        if(!this.existeId(id,tbs)){
+        let valor=this.getExp(Nodo.hijos[4],siguiente,tbs).val;
+        let otrotipo=this.getExp(Nodo.hijos[4],siguiente,tbs).tip;
+        if(!this.existeEnMiAmbito(id,tbs)){
 
           if(otrotipo==tipo){
             this.asignarIdcnTipocnExp(id,tipo,valor,"const",tbs);
@@ -560,10 +574,10 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
     
     case "Condicion":
           
-          let tipo=this.getExp(Nodo.hijos[1],tbs).tip;
+          let tipo=this.getExp(Nodo.hijos[1],siguiente,tbs).tip;
           if(tipo=="boolean"){
               
-              if(this.getExp(Nodo.hijos[1],tbs).val){
+              if(this.getExp(Nodo.hijos[1],siguiente,tbs).val){
                   Nodo.res="si";
               }else{
                   Nodo.res="no";
@@ -626,8 +640,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
           
             if(Nodo.hijos.length==3){
                 let id =Nodo.hijos[0].valor;
-                let valor= this.getExp(Nodo.hijos[2],tbs).val;
-                let tipo= this.getExp(Nodo.hijos[2],tbs).tip;
+                let valor= this.getExp(Nodo.hijos[2],siguiente,tbs).val;
+                let tipo= this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
                 if(this.existeId(id,tbs)){
                   this.asignarExp(id,tipo,valor,tbs);
                 }else{
@@ -638,9 +652,9 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
             }else if(Nodo.hijos.length==4){
 
               let id=Nodo.hijos[1].valor;
-              let valor=this.getExp(Nodo.hijos[3],tbs).val;
-              let tipo=this.getExp(Nodo.hijos[3],tbs).tip;
-              if(!this.existeId(id,tbs)){
+              let valor=this.getExp(Nodo.hijos[3],siguiente,tbs).val;
+              let tipo=this.getExp(Nodo.hijos[3],siguiente,tbs).tip;
+              if(!this.existeEnMiAmbito(id,tbs)){
                   this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
               }else{
                 this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
@@ -650,8 +664,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
               let id=Nodo.hijos[1].valor;
               this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbs);
               let tipo=Nodo.hijos[3].valor;
-              let valor=this.getExp(Nodo.hijos[5],tbs).val;
-              if(!this.existeId(id,tbs)){
+              let valor=this.getExp(Nodo.hijos[5],siguiente,tbs).val;
+              if(!this.existeEnMiAmbito(id,tbs)){
                 this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
               }else{
                 this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
@@ -666,8 +680,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                 this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
             }else if(Nodo.hijos.length==3){
                 let id=Nodo.hijos[0].valor;
-                let tipo=this.getExp(Nodo.hijos[2],tbs).tip;
-                let valor=this.getExp(Nodo.hijos[2],tbs).val;
+                let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
+                let valor=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
                 if(this.existeId(id,tbs)){
                   this.asignarExp(id,tipo,valor,tbs);
                 }else{
@@ -679,6 +693,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
      case "Aumento":
             let id=Nodo.hijos[0].valor;
+            console.log("id en aumento es: "+id);
             if(this.existeId(id,tbs)){
               this.Aumentar(id,tbs);
             }else{
@@ -697,7 +712,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
         break;
       case "SumaIgual":
             let id3=Nodo.hijos[0].valor;
-            let valor=this.getExp(Nodo.hijos[3],tbs).val;
+            let valor=this.getExp(Nodo.hijos[3],siguiente,tbs).val;
             if(this.existeId(id3,tbs)){
               this.SumarIgual(id3,valor,tbs);
             }else{
@@ -707,8 +722,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
         break;
       case "RestaIgual":
             let id4=Nodo.hijos[0].valor;
-            let valor2=this.getExp(Nodo.hijos[3],tbs).val;
-            let tipo2=this.getExp(Nodo.hijos[3],tbs).tip;
+            let valor2=this.getExp(Nodo.hijos[3],siguiente,tbs).val;
+            let tipo2=this.getExp(Nodo.hijos[3],siguiente,tbs).tip;
             if(this.existeId(id4,tbs)){
                 this.RestaIgual(id4,tipo2,valor2,tbs);
             }else{
@@ -719,15 +734,16 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
       
        case "Lparam":
          if(Nodo.hijos.length==3){
+         // console.log("paso Lparam 3");
           this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);  
           for(let item of Nodo.hijos[0].valores){
               Nodo.valores.push(item);
             }
-          Nodo.valores.push({valor:this.getExp(Nodo.hijos[2],tbs).val,tipo:this.getExp(Nodo.hisjos[2],tbs).tip});  
-
+          Nodo.valores.push({valor:this.getExp(Nodo.hijos[2],siguiente,tbs).val,tipo:this.getExp(Nodo.hijos[2],siguiente,tbs).tip});  
+          
          }else if(Nodo.hijos.length==1){
-            Nodo.valores.push({valor:this.getExp(Nodo.hijos[0],tbs).val,tipo:this.getExp(Nodo.hisjos[0],tbs).tip});
-         }
+          Nodo.valores.push({valor:this.getExp(Nodo.hijos[0],siguiente,tbs).val,tipo:this.getExp(Nodo.hijos[0],siguiente,tbs).tip});
+          }
          break; 
           
     }
@@ -739,15 +755,36 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
 existeId(id,tbs){
 let existe=false;
-
-for(let item of tbs.tabla){
-    if(item.nombre==id&&item.rol=="var"){
-        existe=true;
+let padre=null;
+padre=tbs;
+  while(padre!=null){
+    for(let item of padre.tabla){
+      if(item.nombre==id&&item.rol=="let"){
+          existe=true;
+      }
+  }
+    if(existe){
+        break;
     }
-}
+    padre=padre.padre;
+  }
+
 
 return existe;
 }
+
+existeEnMiAmbito(id,tbs){
+  let existe=false;
+      for(let item of tbs.tabla){
+        if(item.nombre==id&&(item.rol=="let"||item.rol=="const")){
+            existe=true;
+        }
+    }
+     
+  return existe;
+  }
+
+
 
 
 asignarId(id,rol,tbs){
@@ -764,18 +801,20 @@ asignarIdcnTipo(id,tipo,rol,tbs){
 
 
  asignarIdcnTipocnExp(id,tipo,valor,rol,tbs){
-
+  console.log("entro para declarar i "+id+" con valor "+valor);
   tbs.tabla.push({nombre:id,tipo:tipo,valor:valor,rol:rol});
   
  }
 
 Aumentar(id,tbs){
+ 
     let padre=null;
     padre=tbs;
     let encontrado=false;
     while(padre!=null){
         for(let i=0; i< padre.tabla.length;i++){
             if(id==padre.tabla[i].nombre&&padre.tabla[i].tipo=="number"){
+              
                 padre.tabla[i].valor+=1;
                 encontrado=true;
             }
@@ -785,7 +824,7 @@ Aumentar(id,tbs){
             break;
         }
 
-        padre=padre.paddre;
+        padre=padre.padre;
     }
 
 }
@@ -806,7 +845,7 @@ Disminuir(id,tbs){
           break;
       }
 
-      padre=padre.paddre;
+      padre=padre.padre;
   }
 
 }
@@ -829,7 +868,7 @@ SumarIgual(id,valor,tbs){
             break;
         }
 
-        padre=padre.paddre;
+        padre=padre.padre;
     }
 }
 
@@ -850,7 +889,7 @@ RestaIgual(id,tipo,valor,tbs){
             break;
         }
 
-        padre=padre.paddre;
+        padre=padre.padre;
     }
   }else{
     this.txtImprimir+="Error Semantico, el decremento necesita ser tipo number \n";
@@ -869,8 +908,8 @@ RestaIgual(id,tipo,valor,tbs){
           for(let i=0; i< padre.tabla.length;i++){
                 if(padre.tabla[i].nombre==id&&padre.tabla[i].rol=="let"){
                   encontrado=true;
-                    if(tipo=padre.tabla[i].tipo||padre.tabla[i].tipo==""){
-                        padre.tabla[i].nombre=valor;
+                    if(tipo==padre.tabla[i].tipo||padre.tabla[i].tipo==""){
+                        padre.tabla[i].valor=valor;
                         padre.tabla[i].tipo=tipo;
                     }else{
                       this.txtImprimir+="Error Semantico, no se puede asignar un tipo diferente al que ya tiene \n";    
@@ -926,16 +965,16 @@ asignarFuncion(idf,tipof,valor,tipo){
 
 
 
-getExp(Exp,tb){
+getExp(Exp,siguiente,tb){
 
     if(Exp.hijos.length==5){
-      let condicion=this.getExp(Exp.hijos[0],tb);
+      let condicion=this.getExp(Exp.hijos[0],siguiente,tb);
       if(condicion.tip=="boolean"){
           if(condicion.val){
-            let op1=this.getExp(Exp.hijos[2],tb);
+            let op1=this.getExp(Exp.hijos[2],siguiente,tb);
             return {val:op1.val,tip:op1.val};
           }else{
-            let op2=this.getExp(Exp.hijos[4],tb);
+            let op2=this.getExp(Exp.hijos[4],siguiente,tb);
 
             return {val:op2.val,tip:op2.tip};
           }
@@ -945,8 +984,8 @@ getExp(Exp,tb){
 
     }else if(Exp.hijos.length==4){
       let id= Exp.hijos[0].valor;
-      this.Visitar(Exp.hijos[2],"","",null,tb);
-
+      this.Visitar(Exp.hijos[2],"","",siguiente,tb);
+      
       for(let i=0; i< this.tbGlobal.tabla.length;i++){
         if(id==this.tbGlobal.tabla[i].nombre&&this.tbGlobal.tabla[i].rol=="funcion"){
           this.tbGlobal.tabla[i].valores=Exp.hijos[2].valores;
@@ -987,9 +1026,9 @@ getExp(Exp,tb){
     }else if(Exp.hijos.length==3){
       let op1;
       let op2;
-          if(Exp.hijos[1].nombre!="Exp"){
-            op1=this.getExp(Exp.hijos[0],tb);
-            op2=this.getExp(Exp.hijos[2],tb);
+          if(Exp.hijos[1].nombre!="Exp"&&Exp.hijos[1].nombre!="pIzq"){
+            op1=this.getExp(Exp.hijos[0],siguiente,tb);
+            op2=this.getExp(Exp.hijos[2],siguiente,tb);
           }  
             
       switch (Exp.hijos[1].nombre) {
@@ -1105,7 +1144,7 @@ getExp(Exp,tb){
 
           case "Exp":
             console.log("paso exp parentesis");
-            return this.getExp(Exp.hijos[1],tb);
+            return this.getExp(Exp.hijos[1],siguiente,tb);
             
           case "pIzq":
             let id=Exp.hijos[0].valor;
@@ -1133,7 +1172,7 @@ getExp(Exp,tb){
 
     }else if(Exp.hijos.length==2){
           console.log("paso neg");
-         let op1=this.getExp(Exp.hijos[1],tb);
+         let op1=this.getExp(Exp.hijos[1],siguiente,tb);
       if (Exp.hijos[0].nombre=="menos"){
         if(op1.tip=="number"){
               
@@ -1180,9 +1219,10 @@ getExp(Exp,tb){
           padre=tb;
           let encontrado=false;
           let valor,tipo;
-          while(padre.padre!=null){
+          while(padre!=null){
             for(let item of padre.tabla){
-                if (item.nombre==Exp.hijos[0].valor&&item.rol=="var"){
+
+                if (item.nombre==Exp.hijos[0].valor&&(item.rol=="let"||item.rol=="const")){
                     encontrado=true;
                     valor=item.valor;
                     tipo=item.tipo;
