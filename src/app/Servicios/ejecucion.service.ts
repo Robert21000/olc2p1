@@ -36,12 +36,12 @@ try {
      this.tbGlobal={tabla:this.tbsimbolos,padre:null};
       this.RecogerFunciones(this.ast);
        this.Visitar(this.ast,"","",null,this.tbGlobal);
-       for(let item of this.tbGlobal.tabla){
+       /*for(let item of this.tbGlobal.tabla){
             console.log("nombre: "+item.nombre+" valor: "+item.valor+" tipo: "+item.tipo+" rol: "+item.rol);
             console.log(item.nodo.nombre)
             console.log(item.parametros);
 
-       }
+       }*/
   }else{
 
     this.listaErrores=this.ast.lista;
@@ -1291,7 +1291,7 @@ TieneReturn(id){
    let esta=false;
    for(let i=0;i<this.tbGlobal.tabla.length;i++){
     if(this.tbGlobal.tabla[i].nombre==id&&this.tbGlobal.tabla[i].rol=="funcion"){
-              console.log("");
+          
             if(this.tbGlobal.tabla[i].return=="return"){
                 esta=true;
                 break;
