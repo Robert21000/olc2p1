@@ -116,6 +116,7 @@ id						[a-zA-Z]+("_"|[a-zA-AZ]|[0-9])*\b;
 'push'				return 'Rpush';
 'pop'				return 'Rpop';
 'length'			return 'Rlength';
+'graficar_ts'		return 'Rgraficar';
 
 
 /* Espacios en blanco */
@@ -759,6 +760,7 @@ instruccion:
 				$$=instruccion;	
 			}
 		|id pIzq Lparam pDer ptycoma									//llamada funcion con param
+
 			{
 				var lista=[];
 
@@ -781,6 +783,27 @@ instruccion:
 				idg++;
 				$$=instruccion;					
 			}			
+		|Rgraficar pIzq pDer ptycoma{
+			
+				var lista=[];
+				lista.push({nombre:"Rgraficar",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+				idg++;
+				lista.push({nombre:"pIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+				idg++;
+				lista.push({nombre:"pDer",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+				idg++;
+				lista.push({nombre:"ptycoma",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
+				idg++;
+
+				var instruccion={
+					nombre:"instruccion",
+					tipo:"noterminal",	
+					nodo:"nodo"+idg,
+					hijos:lista
+				}
+				idg++;
+				$$=instruccion;
+		}
 		;
 
 
@@ -1014,7 +1037,9 @@ Ncase:
 			var Ncase={
 				nombre:"Ncase",
 				tipo:"noterminal",
-				nodo:"nodo"+idg,	
+				nodo:"nodo"+idg,
+				valor:"",
+				exp:{valor:"",tipo:""},	
 				hijos:lista
 			}
 			idg++;
@@ -1033,6 +1058,7 @@ Ncase:
 				nombre:"Ncase",
 				tipo:"noterminal",	
 				nodo:"nodo"+idg,
+				exp:{valor:"",tipo:""},	
 				hijos:lista
 			}
 			idg++;
