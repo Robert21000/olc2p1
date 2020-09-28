@@ -134,7 +134,7 @@ case 4:
  
 		console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column);
 		listaErrores.push({tipo:'Error Sintáctico ',valor:yytext,linea:this._$.first_line,columna:this._$.first_column});
-		return listaErrores;
+		return {nombre:"error",lista:listaErrores};
 		 
 break;
 case 5: case 6:
@@ -2782,7 +2782,7 @@ break;
 case 72: 
 	console.error('Este es un error léxico: ' + yy_.yytext + ', en la linea: ' + yy_.yylloc.first_line + ', en la columna: ' + yy_.yylloc.first_column); 
 	listaErrores.push({tipo:'Error Léxico',valor:yy_.yytext,linea:yy_.yylloc.first_line,columna:yy_.yylloc.first_column});
-	return listaErrores;
+	return {nombre:"error",lista:listaErrores};
 	
 break;
 }
