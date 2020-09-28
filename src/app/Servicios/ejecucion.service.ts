@@ -431,7 +431,10 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                     let miciclo={nombre:"ciclo",valor:""};
                     while(Nodo.hijos[1].res=="si"){
                       this.Visitar(Nodo.hijos[2],idFun,tipoFun,miciclo,tbsLocal);
-                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs); 
+                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
+                      if(miciclo.valor=="break"){
+                          break;
+                      } 
                     }
 
               }else if(Nodo.hijos[0].nombre=="Rdo"){
