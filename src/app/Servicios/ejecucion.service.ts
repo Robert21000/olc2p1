@@ -35,7 +35,8 @@ try {
      this.tbsimbolos=[];
      this.tbGlobal={tabla:this.tbsimbolos,padre:null};
       this.RecogerFunciones(this.ast);
-       this.Visitar(this.ast,"","",null,this.tbGlobal);
+      let cicloG={nombre:"",valor:""};
+       this.Visitar(this.ast,"","",cicloG,this.tbGlobal);
        /*for(let item of this.tbGlobal.tabla){
             console.log("nombre: "+item.nombre+" valor: "+item.valor+" tipo: "+item.tipo+" rol: "+item.rol);
             console.log(item.nodo.nombre)
@@ -46,7 +47,7 @@ try {
 
     this.listaErrores=this.ast.lista;
     for(let item of this.ast.lista){
-        console.log("Error: "+item.tipo +" valor: "+item.valor+" fila: "+item.fila+" columna: "+item.columna);
+        console.log("Error: "+item.tipo +" valor: "+item.valor+" fila: "+item.linea+" columna: "+item.columna);
     }
   }
 } catch (error) {
@@ -147,12 +148,12 @@ RecogerFunciones(Nodo){
 
 
 
-Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
+Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
 
     switch (Nodo.nombre){
         case "ini":
           console.log("ini");  
-          this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+          this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
           
           break;
         case "instrucciones":
@@ -160,14 +161,41 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
               
               if(Nodo.hijos[0].hijos[0].nombre!="Rfunction"){
 
-                    console.log("idfun 2"+idFun);
-                    console.log("tiene return 2"+this.TieneReturn(idFun));
+                
                       if(!this.TieneReturn(idFun)){
-                        this.Visitar(Nodo.hijos[0],idFun,tipoFun,Nodo,tbs);
+
+
+                        if(ciclo.nombre=="ciclo"&&ciclo.valor=="break"){
+                          
+                        }else{
+                          this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                        }
+                        
+                      }else{
+                          if(ciclo.nombre=="ciclo"&&ciclo.valor=="break"){
+                            
+                          }else{
+                            this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                          }
+                        
+
                       }
+
               }
                   if(!this.TieneReturn(idFun)){
-                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+                      if(ciclo.nombre=="ciclo"&&ciclo.valor=="break"){
+                        
+                      }else{
+                        this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
+                      }
+                    
+                  }else{
+                    if(ciclo.nombre=="ciclo"&&ciclo.valor=="break"){
+                        
+                    }else{
+                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
+                    }
+
                   }
                                 
               
@@ -176,12 +204,21 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                 
               if(Nodo.hijos[0].hijos[0].nombre!="Rfunction"){
 
-                console.log("idfun 1"+idFun);
-                    console.log("tiene return 1"+this.TieneReturn(idFun));
                 if(!this.TieneReturn(idFun)){
-                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,null,tbs);
+                  if(ciclo.nombre=="ciclo"&&ciclo.valor=="break"){
+
+                  }else{
+                    this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                  }
+
                 }
                 
+              }else{
+                if(ciclo.nombre=="ciclo"&&ciclo.valor=="break"){
+
+                }else{
+                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                }
               }
               
             }
@@ -189,16 +226,16 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
           break;
       case "instruccion":
               if(Nodo.hijos[0].nombre=="DecLet"){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               }else if(Nodo.hijos[0].nombre=="DecConst"){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               }else if(Nodo.hijos[0].nombre=="id"){
                 if(Nodo.hijos.length==4){
                    if(Nodo.hijos[1].nombre=="igual"){
                      console.log("paso en asignacion");
                         let id=Nodo.hijos[0].valor;
-                        let valor=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
-                        let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip; 
+                        let valor=this.getExp(Nodo.hijos[2],ciclo,tbs).val;
+                        let tipo=this.getExp(Nodo.hijos[2],ciclo,tbs).tip; 
                         if(this.existeId(id,tbs)){
                           this.asignarExp(id,tipo,valor,tbs);
                         }else{
@@ -209,7 +246,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       let id=Nodo.hijos[0].valor;
                       for(let item of this.tbGlobal.tabla){
                           if(id==item.nombre&&item.rol=="funcion"){
-                            this.Visitar(item.nodo,idFun,tipoFun,siguiente,tbs);
+                            this.Visitar(item.nodo,idFun,tipoFun,ciclo,tbs);
                             break;
                           }
                       }
@@ -219,7 +256,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                     
                 }else if(Nodo.hijos.length==5){
                     let id= Nodo.hijos[0].valor;
-                    this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+                    this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
                     for(let i=0; i< this.tbGlobal.tabla.length;i++){
                       if(id==this.tbGlobal.tabla[i].nombre&&this.tbGlobal.tabla[i].rol=="funcion"){
                         this.tbGlobal.tabla[i].valores=Nodo.hijos[2].valores;
@@ -234,7 +271,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                           if(diferente){
                               this.txtImprimir+="Error Semantico los tipos no coinciden en la funcion "+id+" \n";
                           }else{
-                              this.Visitar(this.tbGlobal.tabla[i].nodo,idFun,tipoFun,siguiente,tbs);
+                              this.Visitar(this.tbGlobal.tabla[i].nodo,idFun,tipoFun,ciclo,tbs);
                           }
 
                         }else{
@@ -267,25 +304,25 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                             }
                       }
 
-                      this.Visitar(Nodo.hijos[6],id,tipoFun,siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[6],id,tipoFun,ciclo,tbsLocal);
                       let tipo=Nodo.hijos[6].valor;
                       
-                      this.Visitar(Nodo.hijos[7],id,tipo,siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[7],id,tipo,ciclo,tbsLocal);
 
                     }else if(Nodo.hijos.length==7){
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
                       this.setIniReturn(id);
-                      this.Visitar(Nodo.hijos[5],id,tipoFun,siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[5],id,tipoFun,ciclo,tbsLocal);
                       let tipo=Nodo.hijos[5].valor;
-                      this.Visitar(Nodo.hijos[6],id,tipo,siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[6],id,tipo,ciclo,tbsLocal);
 
                     }else if(Nodo.hijos.length==6){
                       let tabla=[];  
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
-                      //this.Visitar(Nodo.hijos[3],id,tipoFun,siguiente,tbsLocal);
+
                       this.setIniReturn(id);
                       for(let item of this.tbGlobal.tabla){
                         if(item.nombre==id){
@@ -298,7 +335,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                           break;
                         }
                   }
-                      this.Visitar(Nodo.hijos[5],id,"",siguiente,tbsLocal); 
+                      this.Visitar(Nodo.hijos[5],id,"",ciclo,tbsLocal); 
 
                     }else if(Nodo.hijos.length==5){
                    
@@ -306,17 +343,13 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       let id=Nodo.hijos[1].valor;
                       let tbsLocal={tabla:tabla,padre:tbs};
                       this.setIniReturn(id);
-                      this.Visitar(Nodo.hijos[4],id,"",siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[4],id,"",ciclo,tbsLocal);
 
                     }
               }else if(Nodo.hijos[0].nombre=="Rreturn"){
 
                 if(Nodo.hijos.length==2){
                     if(idFun!=""){
-                      /*if(siguiente!=null){
-                        siguiente.return="return";
-                       
-                      }*/
                       this.setReturn(idFun);
                     }else{
                       this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n";  
@@ -326,8 +359,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
                   if(idFun!=""){
                        
-                      let val=this.getExp(Nodo.hijos[1],siguiente,tbs).val;
-                      let tipo=this.getExp(Nodo.hijos[1],siguiente,tbs).tip;
+                      let val=this.getExp(Nodo.hijos[1],ciclo,tbs).val;
+                      let tipo=this.getExp(Nodo.hijos[1],ciclo,tbs).tip;
                       for(let item of this.tbGlobal.tabla){
                         console.log("fucnion "+item.nombre+" rol "+item.rol+" return"+item.return);
                     }
@@ -350,45 +383,45 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
               }else if(Nodo.hijos[0].nombre=="Rif"){
                   if(Nodo.hijos.length==3){
 
-                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
                       if(Nodo.hijos[1].res=="si"){
 
                             let tabla=[];
                             let tbsLocal={tabla:tabla,padre:tbs};
 
-                            this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
+                            this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbsLocal);
 
                       }
 
                   }else if(Nodo.hijos.length==4){
                     
-                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
                     if(Nodo.hijos[1].res=="si"){
 
                           let tabla=[];
                           let tbsLocal={tabla:tabla,padre:tbs};
 
-                          this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
+                          this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbsLocal);
 
                     }else if(Nodo.hijos[1].res=="no"){
-                        this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbs);
+                        this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
                     }
 
                   }else if(Nodo.hijos.length==5){
-                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
                     if(Nodo.hijos[1].res=="si"){
 
                           let tabla=[];
                           let tbsLocal={tabla:tabla,padre:tbs};
 
-                          this.Visitar(Nodo.hisjos[2],idFun,tipoFun,siguiente,tbsLocal);
+                          this.Visitar(Nodo.hisjos[2],idFun,tipoFun,ciclo,tbsLocal);
 
                     }else if(Nodo.hijos[1].res=="no"){
-                        this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbs);
+                        this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
                         if(Nodo.hijos[3].res=="si"){
 
                         }else if(Nodo.hijos[3].res=="no"){
-                          this.Visitar(Nodo.hijos[4],idFun,tipoFun,siguiente,tbs);
+                          this.Visitar(Nodo.hijos[4],idFun,tipoFun,ciclo,tbs);
                         }
 
                     }
@@ -399,20 +432,21 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                     let tabla=[];
                     let tbsLocal={tabla:tabla,padre:tbs};
                 
-                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
-                    
+                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
+                    let miciclo={nombre:"ciclo",valor:""};
                     while(Nodo.hijos[1].res=="si"){
-                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
-                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs); 
+                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,miciclo,tbsLocal);
+                      this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs); 
                     }
 
               }else if(Nodo.hijos[0].nombre=="Rdo"){
 
                 let tabla=[];
                 let tbsLocal={tabla:tabla,padre:tbs};
+                let miciclo={nombre:"ciclo",valor:""};
                   do{
-                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbsLocal);
-                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbs);  
+                    this.Visitar(Nodo.hijos[1],idFun,tipoFun,miciclo,tbsLocal);
+                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);  
                   }while(Nodo.hijos[3].res=="si");
 
               }else if(Nodo.hijos[0].nombre=="Rfor"){
@@ -420,40 +454,73 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                       
                       let tabla=[];
                       let tbsLocal={tabla:tabla,padre:tbs};
-                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbsLocal);
-                        while(this.getExp(Nodo.hijos[4],siguiente,tbsLocal).val){
-                        this.Visitar(Nodo.hijos[8],idFun,tipoFun,siguiente,tbsLocal);
-                        this.Visitar(Nodo.hijos[6],idFun,tipoFun,siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbsLocal);
+                        while(this.getExp(Nodo.hijos[4],ciclo,tbsLocal).val){
+                          let miciclo={nombre:"ciclo",valor:""};
+                          this.Visitar(Nodo.hijos[8],idFun,tipoFun,miciclo,tbsLocal);
+                          this.Visitar(Nodo.hijos[6],idFun,tipoFun,ciclo,tbsLocal);
                         
                       }
                     }
                     
               }else if(Nodo.hijos[0].nombre=="Rconsole"){
                     console.log("console")
-                    let valor=this.getExp(Nodo.hijos[4],siguiente,tbs).val;
+                    let valor=this.getExp(Nodo.hijos[4],ciclo,tbs).val;
                     this.txtImprimir+=valor+"\n"; 
               }else if(Nodo.hijos[0].nombre=="Aumento"){
-                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               }else if(Nodo.hijos[0].nombre=="Decremento"){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               }else if(Nodo.hijos[0].nombre=="SumaIgual"){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               }else if(Nodo.hijos[0].nombre=="RestaIgual"){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);  
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);  
+              }else if(Nodo.hijos[0].nombre=="Rbreak"){
+                        ciclo.valor="break";
+              }else if(Nodo.hijos[0].nombre=="Rgraficar"){
+                  this.txtImprimir+="-----------------------------------------------------\n"    
+                  for(let item of tbs){
+                      if(item.rol=="let"||item.rol=="const"){
+                        if(idFun!=""){
+                          this.txtImprimir+="nombre: "+item.nombre+" tipo: "+item.tipo+" rol: "+item.rol+" ambito: Local \n";
+                        }else{
+                          this.txtImprimir+="nombre: "+item.nombre+" tipo: "+item.tipo+" rol: "+item.rol+" ambito: Global \n";
+                        }
+                          
+                      }else if(item.rol=="funcion"){
+                        this.txtImprimir+="nombre: "+item.nombre+" tipo: "+item.tipo+" rol: "+item.rol+" param: "+item.parametros.length+" ambito: Global \n";
+                      }
+
+                  }
+                  this.txtImprimir+="-----------------------------------------------------\n"     
+              }else if(Nodo.hijos[0].nombre=="Rswitch"){
+                  //this.txtImprimir+="paso por aqui";
+                let valor=this.getExp(Nodo.hijos[2],ciclo,tbs).val;
+                let tipo=this.getExp(Nodo.hijos[2],ciclo,tbs).tip;
+                Nodo.hijos[5].exp.valor=valor;
+                Nodo.hijos[5].exp.tipo=tipo;
+                let tabla=[];
+                let tbsLocal={tabla:tabla,padre:tbs};
+                //let miciclo={nombre:"ciclo",valor:""};
+                this.Visitar(Nodo.hijos[5],idFun,tipoFun,ciclo,tbsLocal);
+                if(Nodo.hijos[5].valor=="no"){         
+                  this.Visitar(Nodo.hijos[6],idFun,tipoFun,ciclo,tbsLocal);
+                }
+
               }
               
 
         break;
             
       case "DecLet":
-        this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+        this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
         break;
       case "Lasig":
               if(Nodo.hijos.length==1){
-                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               }else if(Nodo.hijos.length==3){
-                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
-                  this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+                  this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                  this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
               }
         break;
       
@@ -470,7 +537,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
               if(Nodo.hijos[1].nombre=="dosP"){
                 let id=Nodo.hijos[0].valor;
-                this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+                this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
                 let tipo=Nodo.hijos[2].valor;
                  if(!this.existeEnMiAmbito(id,tbs)){
                     this.asignarIdcnTipo(id,tipo,"let",tbs);
@@ -480,8 +547,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
                  }
               }else if(Nodo.hijos[1].nombre=="igual"){
                  let id = Nodo.hijos[0].valor;
-                 let val=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
-                 let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
+                 let val=this.getExp(Nodo.hijos[2],ciclo,tbs).val;
+                 let tipo=this.getExp(Nodo.hijos[2],ciclo,tbs).tip;
                  //console.log("id "+id+" val: "+val+" tipo: "+tipo);
                 if(!this.existeEnMiAmbito(id,tbs)){
                   this.asignarIdcnTipocnExp(id,tipo,val,"let",tbs);
@@ -494,10 +561,10 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
             
          }else if(Nodo.hijos.length==5){
             let id=Nodo.hijos[0].valor;
-            this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+            this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
             let tipo=Nodo.hijos[2].valor;
-            let valor=this.getExp(Nodo.hijos[4],siguiente,tbs).val;
-            let otrotipo=this.getExp(Nodo.hijos[4],siguiente,tbs).tip;
+            let valor=this.getExp(Nodo.hijos[4],ciclo,tbs).val;
+            let otrotipo=this.getExp(Nodo.hijos[4],ciclo,tbs).tip;
 
             if(!this.existeEnMiAmbito(id,tbs)){
               if(otrotipo==tipo){
@@ -520,23 +587,23 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
       break;
 
     case "DecConst":
-         this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+         this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
       break;
 
     case "Lconst":
           if(Nodo.hijos.length==1){
-              this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
-              this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+              this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
           }else if(Nodo.hijos.length==3){
-              this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
           }
       break;
 
     case "CA":
       if(Nodo.hijos.length==3){
         let id=Nodo.hijos[0].valor;
-        let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
-        let valor=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
+        let tipo=this.getExp(Nodo.hijos[2],ciclo,tbs).tip;
+        let valor=this.getExp(Nodo.hijos[2],ciclo,tbs).val;
         if(!this.existeEnMiAmbito(id,tbs)){
           this.asignarIdcnTipocnExp(id,tipo,valor,"const",tbs);
         }else{
@@ -547,10 +614,10 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
       }else if(Nodo.hijos.length==5){
         let id=Nodo.hijos[0].valor;
-        this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+        this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
         let tipo=Nodo.hijos[2].valor
-        let valor=this.getExp(Nodo.hijos[4],siguiente,tbs).val;
-        let otrotipo=this.getExp(Nodo.hijos[4],siguiente,tbs).tip;
+        let valor=this.getExp(Nodo.hijos[4],ciclo,tbs).val;
+        let otrotipo=this.getExp(Nodo.hijos[4],ciclo,tbs).tip;
         if(!this.existeEnMiAmbito(id,tbs)){
 
           if(otrotipo==tipo){
@@ -569,14 +636,14 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
     
     case "Param":
           if(Nodo.hijos.length==5){
-              this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               let id=Nodo.hijos[2].valor;
-              this.Visitar(Nodo.hijos[4],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[4],idFun,tipoFun,ciclo,tbs);
               let tipo=Nodo.hijos[4].valor;
               this.asignarIdcnTipo(id,tipo,"let",tbs);
           }else if(Nodo.hijos.length==3){
             let id=Nodo.hijos[0].valor;
-            this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+            this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
             let tipo=Nodo.hijos[2].valor;
             this.asignarIdcnTipo(id,tipo,"let",tbs); 
           }
@@ -584,16 +651,16 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
     
     case "BloqueIns":
           if(Nodo.hijos.length==3){
-              this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
           }
       break;
     
     case "Condicion":
           
-          let tipo=this.getExp(Nodo.hijos[1],siguiente,tbs).tip;
+          let tipo=this.getExp(Nodo.hijos[1],ciclo,tbs).tip;
           if(tipo=="boolean"){
               
-              if(this.getExp(Nodo.hijos[1],siguiente,tbs).val){
+              if(this.getExp(Nodo.hijos[1],ciclo,tbs).val){
                   Nodo.res="si";
               }else{
                   Nodo.res="no";
@@ -608,11 +675,11 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
     case "NelseIf":
           if(Nodo.hijos.length==4){
 
-              this.Visitar(Nodo.hijos[2],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
               if(Nodo.hijos[2].res=="si"){
                     let tabla=[];
                     let tbsLocal={tabla:tabla,padre:tbs};  
-                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbsLocal);
+                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbsLocal);
                     Nodo.res="si";
                   
               }else{
@@ -622,18 +689,18 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
           }else if(Nodo.hijos.length==5){
 
-            this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+            this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
 
             if(Nodo.hijos[0].res=="si"){
                 Nodo.res="si";
             }else if(Nodo.hijos[0].res=="no"){
 
-              this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
                   if(Nodo.hijos[3].res=="si"){
                        
                       let tabla=[];
                       let tbsLocal={tabla:tabla,padre:tbs};
-                      this.Visitar(Nodo.hijos[4],idFun,tipoFun,siguiente,tbsLocal);
+                      this.Visitar(Nodo.hijos[4],idFun,tipoFun,ciclo,tbsLocal);
                       Nodo.res="si";
                   }else{
                       Nodo.res="no";
@@ -648,7 +715,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
     case "Nelse":
       let tabla=[];
       let tbsLocal={tabla:tabla,padre:tbs};
-      this.Visitar(Nodo.hijos[1],idFun,tipoFun,siguiente,tbsLocal);
+      this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbsLocal);
       break;
 
 
@@ -656,8 +723,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
           
             if(Nodo.hijos.length==3){
                 let id =Nodo.hijos[0].valor;
-                let valor= this.getExp(Nodo.hijos[2],siguiente,tbs).val;
-                let tipo= this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
+                let valor= this.getExp(Nodo.hijos[2],ciclo,tbs).val;
+                let tipo= this.getExp(Nodo.hijos[2],ciclo,tbs).tip;
                 if(this.existeId(id,tbs)){
                   this.asignarExp(id,tipo,valor,tbs);
                 }else{
@@ -668,8 +735,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
             }else if(Nodo.hijos.length==4){
 
               let id=Nodo.hijos[1].valor;
-              let valor=this.getExp(Nodo.hijos[3],siguiente,tbs).val;
-              let tipo=this.getExp(Nodo.hijos[3],siguiente,tbs).tip;
+              let valor=this.getExp(Nodo.hijos[3],ciclo,tbs).val;
+              let tipo=this.getExp(Nodo.hijos[3],ciclo,tbs).tip;
               if(!this.existeEnMiAmbito(id,tbs)){
                   this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
               }else{
@@ -678,9 +745,9 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
             }else if(Nodo.hijos.length==6){
               let id=Nodo.hijos[1].valor;
-              this.Visitar(Nodo.hijos[3],idFun,tipoFun,siguiente,tbs);
+              this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
               let tipo=Nodo.hijos[3].valor;
-              let valor=this.getExp(Nodo.hijos[5],siguiente,tbs).val;
+              let valor=this.getExp(Nodo.hijos[5],ciclo,tbs).val;
               if(!this.existeEnMiAmbito(id,tbs)){
                 this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
               }else{
@@ -693,11 +760,11 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
 
       case "insfor":
             if(Nodo.hijos.length==1){
-                this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
             }else if(Nodo.hijos.length==3){
                 let id=Nodo.hijos[0].valor;
-                let tipo=this.getExp(Nodo.hijos[2],siguiente,tbs).tip;
-                let valor=this.getExp(Nodo.hijos[2],siguiente,tbs).val;
+                let tipo=this.getExp(Nodo.hijos[2],ciclo,tbs).tip;
+                let valor=this.getExp(Nodo.hijos[2],ciclo,tbs).val;
                 if(this.existeId(id,tbs)){
                   this.asignarExp(id,tipo,valor,tbs);
                 }else{
@@ -728,7 +795,7 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
         break;
       case "SumaIgual":
             let id3=Nodo.hijos[0].valor;
-            let valor=this.getExp(Nodo.hijos[3],siguiente,tbs).val;
+            let valor=this.getExp(Nodo.hijos[3],ciclo,tbs).val;
             if(this.existeId(id3,tbs)){
               this.SumarIgual(id3,valor,tbs);
             }else{
@@ -738,8 +805,8 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
         break;
       case "RestaIgual":
             let id4=Nodo.hijos[0].valor;
-            let valor2=this.getExp(Nodo.hijos[3],siguiente,tbs).val;
-            let tipo2=this.getExp(Nodo.hijos[3],siguiente,tbs).tip;
+            let valor2=this.getExp(Nodo.hijos[3],ciclo,tbs).val;
+            let tipo2=this.getExp(Nodo.hijos[3],ciclo,tbs).tip;
             if(this.existeId(id4,tbs)){
                 this.RestaIgual(id4,tipo2,valor2,tbs);
             }else{
@@ -752,18 +819,57 @@ Visitar(Nodo,idFun,tipoFun,siguiente,tbs){
          if(Nodo.hijos.length==3){
          // console.log("paso Lparam 3");
          Nodo.valores=[];
-          this.Visitar(Nodo.hijos[0],idFun,tipoFun,siguiente,tbs);  
+          this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);  
           for(let item of Nodo.hijos[0].valores){
               Nodo.valores.push(item);
             }
-          Nodo.valores.push({valor:this.getExp(Nodo.hijos[2],siguiente,tbs).val,tipo:this.getExp(Nodo.hijos[2],siguiente,tbs).tip});  
+          Nodo.valores.push({valor:this.getExp(Nodo.hijos[2],ciclo,tbs).val,tipo:this.getExp(Nodo.hijos[2],ciclo,tbs).tip});  
           
          }else if(Nodo.hijos.length==1){
            Nodo.valores=[];
-          Nodo.valores.push({valor:this.getExp(Nodo.hijos[0],siguiente,tbs).val,tipo:this.getExp(Nodo.hijos[0],siguiente,tbs).tip});
+          Nodo.valores.push({valor:this.getExp(Nodo.hijos[0],ciclo,tbs).val,tipo:this.getExp(Nodo.hijos[0],ciclo,tbs).tip});
           }
          break; 
-          
+        case "Ncase":
+              if(Nodo.hijos.length==5){
+                //this.txtImprimir+="paso por aqui ncase 5";
+                Nodo.hijos[0].exp.valor=Nodo.exp.valor;
+                Nodo.hijos[0].exp.tipo=Nodo.exp.tipo;
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                if(Nodo.hijos[0].valor=="no"){
+                    let valor=this.getExp(Nodo.hijos[2],ciclo,tbs).val;
+                    let tipo=this.getExp(Nodo.hijos[2],ciclo,tbs).tip;
+                      
+                  if(valor==Nodo.exp.valor){
+                      Nodo.valor="si";
+                      this.Visitar(Nodo.hijos[4],idFun,tipoFun,ciclo,tbs);
+                  }else{
+                    Nodo.valor="no";    
+                  }
+                }else{
+                  Nodo.valor="si";
+                }
+              }else if(Nodo.hijos.length==4){
+               // this.txtImprimir+="paso por aqui ncase 4";
+                this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
+                let valor=this.getExp(Nodo.hijos[1],ciclo,tbs).val;
+                let tipo=this.getExp(Nodo.hijos[1],ciclo,tbs).tip;
+                //console.log("4valor: "+valor+" exp.valor: "+Nodo.exp.valor);  
+                  if(valor==Nodo.exp.valor){
+                      Nodo.valor="si";
+                      this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
+                  }else{
+                    Nodo.valor="no";    
+                  }
+                
+
+              }
+
+          break;
+
+          case "Ndefault":
+                  this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
+            break;
     }
 
 }
@@ -983,16 +1089,16 @@ asignarFuncion(idf,tipof,valor,tipo){
 
 
 
-getExp(Exp,siguiente,tb){
+getExp(Exp,ciclo,tb){
 
     if(Exp.hijos.length==5){
-      let condicion=this.getExp(Exp.hijos[0],siguiente,tb);
+      let condicion=this.getExp(Exp.hijos[0],ciclo,tb);
       if(condicion.tip=="boolean"){
           if(condicion.val){
-            let op1=this.getExp(Exp.hijos[2],siguiente,tb);
+            let op1=this.getExp(Exp.hijos[2],ciclo,tb);
             return {val:op1.val,tip:op1.val};
           }else{
-            let op2=this.getExp(Exp.hijos[4],siguiente,tb);
+            let op2=this.getExp(Exp.hijos[4],ciclo,tb);
 
             return {val:op2.val,tip:op2.tip};
           }
@@ -1002,7 +1108,7 @@ getExp(Exp,siguiente,tb){
 
     }else if(Exp.hijos.length==4){
       let id= Exp.hijos[0].valor;
-      this.Visitar(Exp.hijos[2],"","",siguiente,tb);
+      this.Visitar(Exp.hijos[2],"","",ciclo,tb);
       
       for(let i=0; i< this.tbGlobal.tabla.length;i++){
         if(id==this.tbGlobal.tabla[i].nombre&&this.tbGlobal.tabla[i].rol=="funcion"){
@@ -1021,7 +1127,7 @@ getExp(Exp,siguiente,tb){
             if(diferente){
                 this.txtImprimir+="Error Semantico los tipos no coinciden en la funcion "+id+" \n";
             }else{
-                this.Visitar(this.tbGlobal.tabla[i].nodo,"","",null,tb);
+                this.Visitar(this.tbGlobal.tabla[i].nodo,"","",ciclo,tb);
                 let valor="";
                 let tipo="string";
                 for(let item of this.tbGlobal.tabla){
@@ -1048,8 +1154,8 @@ getExp(Exp,siguiente,tb){
       let op1;
       let op2;
           if(Exp.hijos[1].nombre!="Exp"&&Exp.hijos[1].nombre!="pIzq"){
-            op1=this.getExp(Exp.hijos[0],siguiente,tb);
-            op2=this.getExp(Exp.hijos[2],siguiente,tb);
+            op1=this.getExp(Exp.hijos[0],ciclo,tb);
+            op2=this.getExp(Exp.hijos[2],ciclo,tb);
           }  
             
       switch (Exp.hijos[1].nombre) {
@@ -1165,13 +1271,13 @@ getExp(Exp,siguiente,tb){
 
           case "Exp":
             console.log("paso exp parentesis");
-            return this.getExp(Exp.hijos[1],siguiente,tb);
+            return this.getExp(Exp.hijos[1],ciclo,tb);
             
           case "pIzq":
             let id=Exp.hijos[0].valor;
             for(let item of this.tbGlobal.tabla){
                 if(id==item.nombre&&item.rol=="funcion"){
-                  this.Visitar(item.nodo,"","",null,tb);
+                  this.Visitar(item.nodo,"","",ciclo,tb);
                   break;
                 }
             }
@@ -1193,7 +1299,7 @@ getExp(Exp,siguiente,tb){
 
     }else if(Exp.hijos.length==2){
           console.log("paso neg");
-         let op1=this.getExp(Exp.hijos[1],siguiente,tb);
+         let op1=this.getExp(Exp.hijos[1],ciclo,tb);
       if (Exp.hijos[0].nombre=="menos"){
         if(op1.tip=="number"){
               

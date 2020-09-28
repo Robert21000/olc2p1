@@ -411,12 +411,6 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                         this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
                         stack[stack.length-1]+=Nodo.hijos[5].valor+Nodo.hijos[6].valor+"\n";
 
-                  }else if(Nodo.hijos[0].nombre=="miconsole"){
-                        stack[stack.length-1]+=Nodo.hijos[0].valor;
-                        stack[stack.length-1]+=Nodo.hijos[1].valor;
-                        this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                        stack[stack.length-1]+=Nodo.hijos[3].valor+Nodo.hijos[4].valor+"\n";
-
                   }
                   else if(Nodo.hijos[0].nombre=="Aumento"){  
                     this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
@@ -430,6 +424,11 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                   }else if(Nodo.hijos[0].nombre=="RestaIgual"){
                     this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
                     stack[stack.length-1]+=Nodo.hijos[1].valor+"\n";
+                  }else if(Nodo.hijos[0].nombre=="Rgraficar"){
+                    stack[stack.length-1]+=Nodo.hijos[0].valor;
+                    stack[stack.length-1]+=Nodo.hijos[1].valor;
+                    stack[stack.length-1]+=Nodo.hijos[2].valor;
+                    stack[stack.length-1]+=Nodo.hijos[3].valor+"\n";
                   }      
 
                 break;
