@@ -444,7 +444,10 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                 let miciclo={nombre:"ciclo",valor:""};
                   do{
                     this.Visitar(Nodo.hijos[1],idFun,tipoFun,miciclo,tbsLocal);
-                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);  
+                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
+                    if(miciclo.valor=="break"){
+                        break;
+                    }  
                   }while(Nodo.hijos[3].res=="si");
 
               }else if(Nodo.hijos[0].nombre=="Rfor"){
@@ -453,10 +456,14 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                       let tabla=[];
                       let tbsLocal={tabla:tabla,padre:tbs};
                       this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbsLocal);
+                      let miciclo={nombre:"ciclo",valor:""};
                         while(this.getExp(Nodo.hijos[4],ciclo,tbsLocal).val){
-                          let miciclo={nombre:"ciclo",valor:""};
+                          
                           this.Visitar(Nodo.hijos[8],idFun,tipoFun,miciclo,tbsLocal);
                           this.Visitar(Nodo.hijos[6],idFun,tipoFun,ciclo,tbsLocal);
+                          if(miciclo.valor=="break"){
+                              break;
+                          }
                         
                       }
                     }
