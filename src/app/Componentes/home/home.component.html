@@ -36,7 +36,7 @@
        ></ngx-codemirror>
  
         <button  type  ="button" class="btn btn-primary"(click)="Ejecutar()">Ejecutar</button>
-        
+        <button  type  ="button" class="btn btn-danger"(click)="Graficar2()">Graficar</button>
     </div>
 
 </div>
@@ -44,6 +44,7 @@
 </div>
 <div class="container">
   <div class="row">
+    <h1 style="color: white;">Consola</h1>
     <ngx-codemirror
     [(ngModel)]="consola"
      [options]="{
@@ -54,6 +55,12 @@
    ></ngx-codemirror>
   </div>
   </div>
+  <div class="container">
+    <div class="row"  *ngFor="let item of lista" style="color: white;">
+        Error: {{item.tipo}}| Valor: {{item.valor}}| Fila: {{item.linea}}| Columna: {{item.columna}}
+    </div>
+
+</div>
 <div class="container">
 <div class="row">
     <app-arbol></app-arbol>

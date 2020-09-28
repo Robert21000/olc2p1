@@ -36,13 +36,8 @@ try {
      this.tbGlobal={tabla:this.tbsimbolos,padre:null};
       this.RecogerFunciones(this.ast);
       let cicloG={nombre:"",valor:""};
-       this.Visitar(this.ast,"","",cicloG,this.tbGlobal);
-       /*for(let item of this.tbGlobal.tabla){
-            console.log("nombre: "+item.nombre+" valor: "+item.valor+" tipo: "+item.tipo+" rol: "+item.rol);
-            console.log(item.nodo.nombre)
-            console.log(item.parametros);
+      this.Visitar(this.ast,"","",cicloG,this.tbGlobal);
 
-       }*/
   }else{
 
     this.listaErrores=this.ast.lista;
@@ -65,7 +60,7 @@ getImprimir(){
 
 getErrores(){
 
-  this.listaErrores;
+ return  this.listaErrores;
 }
 
 
@@ -478,8 +473,8 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
               }else if(Nodo.hijos[0].nombre=="Rbreak"){
                         ciclo.valor="break";
               }else if(Nodo.hijos[0].nombre=="Rgraficar"){
-                  this.txtImprimir+="-----------------------------------------------------\n"    
-                  for(let item of tbs){
+                  this.txtImprimir+="-----------------------------------------------------\n";    
+                  for(let item of tbs.tabla){
                       if(item.rol=="let"||item.rol=="const"){
                         if(idFun!=""){
                           this.txtImprimir+="nombre: "+item.nombre+" tipo: "+item.tipo+" rol: "+item.rol+" ambito: Local \n";
@@ -492,7 +487,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                       }
 
                   }
-                  this.txtImprimir+="-----------------------------------------------------\n"     
+                  this.txtImprimir+="-----------------------------------------------------\n" ;    
               }else if(Nodo.hijos[0].nombre=="Rswitch"){
                   //this.txtImprimir+="paso por aqui";
                 let valor=this.getExp(Nodo.hijos[2],ciclo,tbs).val;

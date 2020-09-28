@@ -26,16 +26,25 @@ export class HomeComponent implements OnInit {
 
 
 
-
+lista:any=[];
   
  Traducir(){
     try {
-     this.ast = parser.parse(this.content);    
+      
+      this.ast = parser.parse(this.content);
+
+    if(this.ast.nombre!="error"){
+      this.lista=[];
       let pila=[];
       pila.push("");
       this.salida="";
       this.servTr.PrimeraPasada(this.ast);
       this.salida=this.servTr.getResult(this.ast,pila);
+    }else{
+
+      this.lista=this.ast.lista;
+    } 
+      
       
     } catch (e) {
       console.error(e);
@@ -51,13 +60,20 @@ Graficar(){
    this.servTr.Graficar(this.ast);
 }
 
+Graficar2(){
+  this.ast = parser.parse(this.salida);
+  this.servTr.Graficar(this.ast);
+}
+
 
 
 Ejecutar(){
   this.consola="";
+  this.lista=[];
   this.servEj.Ejecucion(this.salida);
   this.consola=this.servEj.getImprimir();
-  
+  this.lista=this.servEj.getErrores();
+
 }
 
 

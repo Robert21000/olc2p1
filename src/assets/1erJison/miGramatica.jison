@@ -133,7 +133,7 @@ id						[a-zA-Z]+("_"|[a-zA-AZ]|[0-9])*\b;
 .                       { 
 	console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column); 
 	listaErrores.push({tipo:'Error Léxico',valor:yytext,linea:yylloc.first_line,columna:yylloc.first_column});
-	return listaErrores;
+	return {nombre:"error",lista:listaErrores};
 	}
 /lex
 
@@ -216,7 +216,7 @@ instrucciones:  instruccion instrucciones
 	| error { 
 		console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column);
 		listaErrores.push({tipo:'Error Sintáctico ',valor:yytext,linea:this._$.first_line,columna:this._$.first_column});
-		return listaErrores;
+		return {nombre:"error",lista:listaErrores};
 		 }
 	;	
 

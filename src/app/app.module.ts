@@ -10,6 +10,7 @@ import { NavBarComponent } from './Componentes/nav-bar/nav-bar.component';
 import { ArbolComponent } from './Componentes/arbol/arbol.component';
 import { NuevoComponent } from './Componentes/nuevo/nuevo.component';
 import { HomeComponent } from './Componentes/home/home.component';
+import { ErroresComponent } from './Componentes/errores/errores.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { HomeComponent } from './Componentes/home/home.component';
     NavBarComponent,
     ArbolComponent,
     NuevoComponent,
-    HomeComponent
+    HomeComponent,
+    ErroresComponent
   ],
   imports: [
     BrowserModule,
