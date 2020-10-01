@@ -409,7 +409,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                           let tabla=[];
                           let tbsLocal={tabla:tabla,padre:tbs};
 
-                          this.Visitar(Nodo.hisjos[2],idFun,tipoFun,ciclo,tbsLocal);
+                          this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbsLocal);
 
                     }else if(Nodo.hijos[1].res=="no"){
                         this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
@@ -424,12 +424,13 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                   }
               }else if(Nodo.hijos[0].nombre=="Rwhile"){
 
-                    let tabla=[];
-                    let tbsLocal={tabla:tabla,padre:tbs};
+                    
                 
                     this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
                     let miciclo={nombre:"ciclo",valor:""};
                     while(Nodo.hijos[1].res=="si"){
+                      let tabla=[];
+                    let tbsLocal={tabla:tabla,padre:tbs};
                       this.Visitar(Nodo.hijos[2],idFun,tipoFun,miciclo,tbsLocal);
                       this.Visitar(Nodo.hijos[1],idFun,tipoFun,ciclo,tbs);
                       if(miciclo.valor=="break"){
@@ -439,12 +440,13 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
 
               }else if(Nodo.hijos[0].nombre=="Rdo"){
 
-                let tabla=[];
-                let tbsLocal={tabla:tabla,padre:tbs};
+                
                 let miciclo={nombre:"ciclo",valor:""};
                   do{
+                    let tabla=[];
+                    let tbsLocal={tabla:tabla,padre:tbs};
                     this.Visitar(Nodo.hijos[1],idFun,tipoFun,miciclo,tbsLocal);
-                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
+                    this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbsLocal);
                     if(miciclo.valor=="break"){
                         break;
                     }  
@@ -453,14 +455,15 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
               }else if(Nodo.hijos[0].nombre=="Rfor"){
                     if(Nodo.hijos.length==9){
                       
-                      let tabla=[];
-                      let tbsLocal={tabla:tabla,padre:tbs};
-                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbsLocal);
+                      this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
                       let miciclo={nombre:"ciclo",valor:""};
-                        while(this.getExp(Nodo.hijos[4],ciclo,tbsLocal).val){
+                        while(this.getExp(Nodo.hijos[4],ciclo,tbs).val){
+                          let tabla=[];
+                          let tbsLocal={tabla:tabla,padre:tbs};
                           
                           this.Visitar(Nodo.hijos[8],idFun,tipoFun,miciclo,tbsLocal);
                           this.Visitar(Nodo.hijos[6],idFun,tipoFun,ciclo,tbsLocal);
+                          this.Visitar(Nodo.hijos[4],idFun,tipoFun,ciclo,tbsLocal);
                           if(miciclo.valor=="break"){
                               break;
                           }
@@ -536,7 +539,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
               this.asignarId(id,"let",tbs);
             }else{
 
-               this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada  en este ambito \n"; 
+               this.txtImprimir+="Error Semantico 1, la variable:" +id+" ya se encuentra declarada  en este ambito \n"; 
             }
          }else if(Nodo.hijos.length==3){
 
@@ -548,7 +551,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                     this.asignarIdcnTipo(id,tipo,"let",tbs);
                  }else{
     
-                  this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
+                  this.txtImprimir+="Error Semantico 2, la variable:" +id+" ya se encuentra declarada en este ambito \n";
                  }
               }else if(Nodo.hijos[1].nombre=="igual"){
                  let id = Nodo.hijos[0].valor;
@@ -559,7 +562,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                   this.asignarIdcnTipocnExp(id,tipo,val,"let",tbs);
                 }else{
 
-                  this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
+                  this.txtImprimir+="Error Semantico 3, la variable:" +id+" no existe \n";
                 }
                 
               }
@@ -581,7 +584,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
               
             }else{
 
-              this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
+              this.txtImprimir+="Error Semantico, la variable 4:" +id+" ya se encuentra declarada en este ambito \n";
             }
 
          }
@@ -596,10 +599,10 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
       break;
 
     case "Lconst":
-          if(Nodo.hijos.length==1){
+          if(Nodo.hijos.length==3){
               this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
               this.Visitar(Nodo.hijos[2],idFun,tipoFun,ciclo,tbs);
-          }else if(Nodo.hijos.length==3){
+          }else if(Nodo.hijos.length==1){
               this.Visitar(Nodo.hijos[0],idFun,tipoFun,ciclo,tbs);
           }
       break;
@@ -742,23 +745,16 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
               let id=Nodo.hijos[1].valor;
               let valor=this.getExp(Nodo.hijos[3],ciclo,tbs).val;
               let tipo=this.getExp(Nodo.hijos[3],ciclo,tbs).tip;
-              if(!this.existeEnMiAmbito(id,tbs)){
-                  this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
-              }else{
-                this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
-              }
+              this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs); 
+              
 
             }else if(Nodo.hijos.length==6){
               let id=Nodo.hijos[1].valor;
               this.Visitar(Nodo.hijos[3],idFun,tipoFun,ciclo,tbs);
               let tipo=Nodo.hijos[3].valor;
               let valor=this.getExp(Nodo.hijos[5],ciclo,tbs).val;
-              if(!this.existeEnMiAmbito(id,tbs)){
-                this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
-              }else{
-                this.txtImprimir+="Error Semantico, la variable:" +id+" ya se encuentra declarada en este ambito \n";
-              }
-              
+              this.asignarIdcnTipocnExp(id,tipo,valor,"let",tbs);
+            
             }
 
       break;
@@ -773,7 +769,7 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                 if(this.existeId(id,tbs)){
                   this.asignarExp(id,tipo,valor,tbs);
                 }else{
-                  this.txtImprimir+="Error Semantico, la variable "+id+" no existe \n";  
+                  this.txtImprimir+="Error Semantico , la variable "+id+" no existe \n";  
                 }
                 
             }
@@ -905,7 +901,7 @@ return existe;
 existeEnMiAmbito(id,tbs){
   let existe=false;
       for(let item of tbs.tabla){
-        if(item.nombre==id&&(item.rol=="let"||item.rol=="const")){
+        if(item.nombre==id&&item.rol=="let"){
             existe=true;
         }
     }
@@ -1165,8 +1161,8 @@ getExp(Exp,ciclo,tb){
             
       switch (Exp.hijos[1].nombre) {
           case "difer":
-
-              return {valor:op1.val!=op2.val,tip:"boolean"};
+                
+              return {val:op1.val!=op2.val,tip:"boolean"};
           case "dbigual":
               return {val:op1.val==op2.val,tip:"boolean"}; 
           case "mas":
@@ -1223,16 +1219,16 @@ getExp(Exp,ciclo,tb){
             }  
 
           case "menor":
-            console.log("paso menor");
+            /*console.log("paso menor");
             if(op1.tip=="string"||op1.tip=="string"){
               this.txtImprimir+="Error Semantico no se puede comparar < con tipos string \n";
               return {val:false,tip:"boolean"};
             }else{
                 return {val:op1.val<op2.val,tip:"boolean"};
-            }
-
+            }*/
+            return {val:op1.val<op2.val,tip:"boolean"};
           case "mayor":
-            console.log(" op1.tip: "+op1.tip);
+            /*console.log(" op1.tip: "+op1.tip);
             console.log(" op2.tip: "+op2.tip);
             if(op1.tip=="string"||op1.tip=="string"){
               this.txtImprimir+="Error Semantico no se puede comparar > con tipos string \n";
@@ -1240,21 +1236,24 @@ getExp(Exp,ciclo,tb){
             }else{
                 return {val:op1.val>op2.val,tip:"boolean"};
             }
-            
+            */
+           return {val:op1.val>op2.val,tip:"boolean"};
             case "menorq":
-              if(op1.tip=="string"||op1.tip=="string"){
+              /*if(op1.tip=="string"||op1.tip=="string"){
                 this.txtImprimir+="Error Semantico no se puede comparar <= con tipos string \n";
                 return {val:false,tip:"boolean"};
               }else{
                   return {val:op1.val<=op2.val,tip:"boolean"};
-              }
+              }*/
+              return {val:op1.val<=op2.val,tip:"boolean"};
           case "mayorq":
-            if(op1.tip=="string"||op1.tip=="string"){
+            /*if(op1.tip=="string"||op1.tip=="string"){
               this.txtImprimir+="Error Semantico no se puede comparar >= con tipos string \n";
               return {val:false,tip:"boolean"};
             }else{
                 return {val:op1.val>=op2.val,tip:"boolean"};
-            }
+            }*/
+            return {val:op1.val>=op2.val,tip:"boolean"};
           case "or":
             if(op1.tip=="boolean"&&op1.tip=="boolean"){
               
@@ -1358,6 +1357,7 @@ getExp(Exp,ciclo,tb){
                     encontrado=true;
                     valor=item.valor;
                     tipo=item.tipo;
+                  //  this.txtImprimir+="encontro "+item.nombre+"\n";
                 }
             }
 
@@ -1370,6 +1370,7 @@ getExp(Exp,ciclo,tb){
           if(encontrado){
             return  {val:valor,tip:tipo};
           }else{
+            this.txtImprimir+="Error Semantico  la variable: "+Exp.hijos[0].valor+" No existe ";
             return {val:"",tip:"string"}
           }
           
