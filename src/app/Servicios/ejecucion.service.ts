@@ -452,8 +452,12 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                 if(Nodo.hijos.length==2){
                     if(idFun!=""){
                       this.setReturn(idFun);
+                      //ciclo.nombre="ciclo";
+                     // ciclo.valor="break";
                     }else{
-                      this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n";  
+                      this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n"; 
+                      //ciclo.nombre="ciclo";
+                      //ciclo.valor="break"; 
                     }
 
                 }else if(Nodo.hijos.length==3){
@@ -472,12 +476,14 @@ Visitar(Nodo,idFun,tipoFun,ciclo,tbs){
                           console.log("fucnion "+item.nombre+" rol "+item.rol+" return"+item.return);
                       }*/
                       this.asignarFuncion(idFun,tipoFun,val,tipo);
-
-                     
+                     //ciclo.nombre="ciclo";
+                      //ciclo.valor="break";
                       
                   }else{
 
-                    this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n";     
+                    this.txtImprimir+="Error Semantico, return solo puede venir adentro de una funcion \n"; 
+                    ciclo.nombre="ciclo";
+                      ciclo.valor="break";    
                   }
                   
 
@@ -1381,8 +1387,8 @@ getExp(Exp,ciclo,tb){
                   }
    
             if(valret!=null){
-                //console.log(valor);
-               // console.log(valret)
+                console.log(valor);
+               console.log(valret)
                 return {val:valret[valor].valor,tip:valret[valor].tipo};
             }else{
                 return {val:"",tip:"string"};
@@ -1393,7 +1399,7 @@ getExp(Exp,ciclo,tb){
     }else if(Exp.hijos.length==3){
       let op1;
       let op2;
-          if(Exp.hijos[1].nombre!="Exp"&&Exp.hijos[1].nombre!="pIzq"&&Exp.hijos[1].nombre!="LExp"&&Exp.hijos[1].nombre!="punto"){
+          if(Exp.hijos[1].nombre!="Exp"&&Exp.hijos[1].nombre!="pIzq"&&Exp.hijos[1].nombre!="LExp"&&Exp.hijos[1].nombre!="punto"&&Exp.hijos[1].nombre!="and"&&Exp.hijos[1].nombre!="or"){
             op1=this.getExp(Exp.hijos[0],ciclo,tb);
             op2=this.getExp(Exp.hijos[2],ciclo,tb);
           }  
@@ -1477,28 +1483,25 @@ getExp(Exp,ciclo,tb){
             
             //return {val:op1.val>=op2.val,tip:"boolean"};
           case "or":
-            if(op1.tip=="boolean"&&op2.tip=="boolean"){
+            op1=this.getExp(Exp.hijos[0],ciclo,tb);
+            
               if(op1.val){
                 return {val:true,tip:"boolean"}
               }else{
+                op2=this.getExp(Exp.hijos[2],ciclo,tb); 
                 if(op2.val){
                   return {val:true,tip:"boolean"}  
                 }else{
                   return {val:false,tip:"boolean"}
                 }
               }
-              
-            }else{
-              this.txtImprimir+="Error Semantico no se puede operar logico || con tipos que no sean boolean \n";  
-              return {val:false,tip:"boolean"};
-            }
           case "and":
-            if(op1.tip=="boolean"&&op2.tip=="boolean"){
-              
               //return {val:op1.val&&op2.val,tip:"boolean"};
+              op1=this.getExp(Exp.hijos[0],ciclo,tb);
               if(!op1.val){
                 return {val:false,tip:"boolean"}
               }else{
+                op2=this.getExp(Exp.hijos[2],ciclo,tb);
                 if(!op2.val){
                   return {val:false,tip:"boolean"}
                 }else{
@@ -1506,10 +1509,7 @@ getExp(Exp,ciclo,tb){
                 }
               }
               
-            }else{
-              this.txtImprimir+="Error Semantico no se puede operar logico && con tipos que no sean boolean \n";  
-              return {val:false,tip:"boolean"};
-            }  
+             
 
           case "Exp":
             console.log("paso exp parentesis");
