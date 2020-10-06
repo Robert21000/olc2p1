@@ -108,7 +108,6 @@ id						[a-zA-Z]+("_"|[a-zA-AZ]|[0-9])*\b;
 "default"			return 'Rdefault';
 "switch"			return 'Rswitch';
 "case"				return 'Rcase';
-"Array"				return 'Rarray';
 "let"				return 'Rlet';
 "const"				return 'Rconst';
 "console"			return 'Rconsole';
@@ -257,6 +256,7 @@ instruccion:
 			}
 
 		|id igual Exp ptycoma											//id asignacion
+
 			{
 				var lista=[];
 				lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
@@ -275,7 +275,30 @@ instruccion:
 				idg++;
 				$$=instruccion;				
 			}
-		
+		|id cIzq Exp cDer igual Exp ptycoma
+			{							
+				var lista=[];
+				lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+				idg++;
+				lista.push({nombre:"cIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+				idg++;
+				lista.push($3);
+				lista.push({nombre:"cDer",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
+				idg++;
+				lista.push({nombre:"igual",tipo:"terminal",nodo:"nodo"+idg,valor:$5});
+				idg++;
+				lista.push($6);
+				lista.push({nombre:"ptycoma",tipo:"terminal",nodo:"nodo"+idg,valor:$7});
+				idg++;
+				var instruccion={
+					nombre:"instruccion",
+					tipo:"noterminal",
+					nodo:"nodo"+idg,	
+					hijos:lista
+				}
+				idg++;
+				$$=instruccion;				
+			}
 		|Rfunction id pIzq Param pDer dosP Ntipo BloqueIns				//funciones
 			{
 				var lista=[];
@@ -760,7 +783,6 @@ instruccion:
 				$$=instruccion;	
 			}
 		|id pIzq Lparam pDer ptycoma									//llamada funcion con param
-
 			{
 				var lista=[];
 
@@ -783,7 +805,58 @@ instruccion:
 				idg++;
 				$$=instruccion;					
 			}			
-		|Rgraficar pIzq pDer ptycoma{
+		|id punto Rpop pIzq pDer ptycoma
+			{
+				var lista=[];
+
+				lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+				idg++;
+				lista.push({nombre:"punto",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+				idg++;
+				lista.push({nombre:"Rpop",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+				idg++;
+				lista.push({nombre:"pIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
+				idg++;
+				lista.push({nombre:"pDer",tipo:"terminal",nodo:"nodo"+idg,valor:$5});
+				idg++;
+				lista.push({nombre:"ptycoma",tipo:"terminal",nodo:"nodo"+idg,valor:$6});
+				idg++;
+				var instruccion={
+					nombre:"instruccion",
+					tipo:"noterminal",	
+					nodo:"nodo"+idg,
+					hijos:lista
+				}
+				idg++;
+			$$=instruccion;		
+			}
+		|id punto Rpush pIzq Exp pDer ptycoma
+			{
+				var lista=[];
+				lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+				idg++;
+				lista.push({nombre:"punto",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+				idg++;
+				lista.push({nombre:"Rpush",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+				idg++;
+				lista.push({nombre:"pIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
+				idg++;
+				lista.push($5);
+				lista.push({nombre:"pDer",tipo:"terminal",nodo:"nodo"+idg,valor:$6});
+				idg++;
+				lista.push({nombre:"ptycoma",tipo:"terminal",nodo:"nodo"+idg,valor:$7});
+				idg++;
+				var instruccion={
+					nombre:"instruccion",
+					tipo:"noterminal",	
+					nodo:"nodo"+idg,
+					hijos:lista
+				}
+				idg++;
+				$$=instruccion;		
+			}
+		|Rgraficar pIzq pDer ptycoma
+			{
 			
 				var lista=[];
 				lista.push({nombre:"Rgraficar",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
@@ -803,7 +876,7 @@ instruccion:
 				}
 				idg++;
 				$$=instruccion;
-		}
+			}
 		;
 
 
@@ -975,7 +1048,8 @@ NelseIf:
 		var NelseIf={
 			nombre:"NelseIf",
 			tipo:"noterminal",
-			nodo:"nodo"+idg,	
+			nodo:"nodo"+idg,
+			res:"",	
 			hijos:lista
 		}
 		idg++;
@@ -1015,7 +1089,8 @@ Nelse:
 		var Nelse={
 			nombre:"Nelse",
 			tipo:"noterminal",
-			nodo:"nodo"+idg,	
+			nodo:"nodo"+idg,
+			res:"",	
 			hijos:lista
 		}
 		idg++;
@@ -1487,7 +1562,8 @@ CA: id dosP Ntipo igual Exp
 		idg++;
 		lista.push($3);
 		lista.push({nombre:"igual",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
-		lista.push($4);
+		idg++;
+		lista.push($5);
 		var CA={
 			nombre:"CA",
 			tipo:"noterminal",	
@@ -1577,10 +1653,50 @@ Ntipo:
 		idg++;
 		$$=Ntipo;		
 	}
-    |id
+    |Rboolean cIzq cDer
 	{
 		var lista=[];
-		lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});		
+		lista.push({nombre:"Rboolean",tipo:"terminal",nodo:"nodo"+idg,valor:$1});		
+		idg++;
+		lista.push({nombre:"cIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		idg++;
+		lista.push({nombre:"cDer",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+		idg++;
+		var Ntipo={
+			nombre:"Ntipo",
+			tipo:"noterminal",
+			nodo:"nodo"+idg,	
+			hijos:lista
+		}
+		idg++;
+		$$=Ntipo;		
+	}
+	|Rstring cIzq cDer
+	{
+		var lista=[];
+		lista.push({nombre:"Rstring",tipo:"terminal",nodo:"nodo"+idg,valor:$1});		
+		idg++;
+		lista.push({nombre:"cIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		idg++;
+		lista.push({nombre:"cDer",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+		idg++;
+		var Ntipo={
+			nombre:"Ntipo",
+			tipo:"noterminal",
+			nodo:"nodo"+idg,	
+			hijos:lista
+		}
+		idg++;
+		$$=Ntipo;	
+	}
+	|Rnumber cIzq cDer
+	{
+		var lista=[];
+		lista.push({nombre:"Rnumber",tipo:"terminal",nodo:"nodo"+idg,valor:$1});		
+		idg++;
+		lista.push({nombre:"cIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		idg++;
+		lista.push({nombre:"cDer",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
 		idg++;
 		var Ntipo={
 			nombre:"Ntipo",
@@ -1595,17 +1711,19 @@ Ntipo:
 
 
 LExp:
-	LExp coma Exp
+	Exp coma LExp
 	{
 		var lista=[];
 		lista.push($1);
 		lista.push({nombre:"coma",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
 		idg++;
-		lista.push($3);		
+		lista.push($3);
+		var pila=[];		
 		var LExp={
 			nombre:"LExp",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			pila:pila,
 			hijos:lista
 		}
 		idg++;
@@ -1615,49 +1733,36 @@ LExp:
 	{
 		var lista=[];
 		lista.push($1);		
+		var pila=[];
 		var LExp={
 			nombre:"LExp",
 			tipo:"noterminal",	
 			nodo:"nodo"+idg,
+			pila:pila,
 			hijos:lista
 		}
 		idg++;
 		$$=LExp;		
 	}
-	;
-
-
-LLExp:
-	LLExp coma Exp
-	{
+	|{
 		var lista=[];
-		lista.push($1);
-		lista.push({nombre:"coma",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		lista.push({nombre:"Epsilon",tipo:"terminal",nodo:"nodo"+idg,valor:"epsilon"});
 		idg++;
-		lista.push($3);		
-		var LLExp={
-			nombre:"LLExp",
-			tipo:"noterminal",	
+		var pila=[];
+		var LExp={
+			nombre:"LExp",
+			tipo:"noterminal",
 			nodo:"nodo"+idg,
+			pila:pila,	
 			hijos:lista
 		}
 		idg++;
-		$$=LLExp;		
-	}
-	|Exp
-	{
-		var lista=[];
-		lista.push($1);		
-		var LLExp={
-			nombre:"LLExp",
-			tipo:"noterminal",	
-			nodo:"nodo"+idg,
-			hijos:lista
-		}
-		idg++;
-		$$=LLExp;		
+		$$=LExp;
+
 	}
 	;
+
+
 
 
 
@@ -1769,6 +1874,23 @@ Exp:
 		}
 		idg++;
 		$$=Exp;		 	 		
+	}
+	|cIzq LExp cDer
+	{
+		var lista=[];
+		lista.push({nombre:"cIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+		idg++;
+		lista.push($2);
+		lista.push({nombre:"cDer",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+		idg++;
+		var Exp={
+			nombre:"Exp",
+			tipo:"noterminal",
+			nodo:"nodo"+idg,	
+			hijos:lista
+		}
+		idg++;
+		$$=Exp;	
 	}
 	|Exp difer Exp
 	{
@@ -2214,6 +2336,42 @@ Exp:
 		idg++;
 		$$=Exp;		
 	}
-	
+	|id cIzq Exp cDer
+	{
+		var lista=[];
+		lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+		idg++;
+		lista.push({nombre:"cIzq",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		idg++;
+		lista.push($3);
+		lista.push({nombre:"cDer",tipo:"terminal",nodo:"nodo"+idg,valor:$4});
+		idg++;		
+		var Exp={
+			nombre:"Exp",
+			tipo:"noterminal",
+			nodo:"nodo"+idg,	
+			hijos:lista
+		}
+		idg++;
+		$$=Exp;		
+	}
+	|id punto Rlength
+	{
+		var lista=[];
+		lista.push({nombre:"id",tipo:"terminal",nodo:"nodo"+idg,valor:$1});
+		idg++;
+		lista.push({nombre:"punto",tipo:"terminal",nodo:"nodo"+idg,valor:$2});
+		idg++;
+		lista.push({nombre:"Rlength",tipo:"terminal",nodo:"nodo"+idg,valor:$3});
+		idg++;		
+		var Exp={
+			nombre:"Exp",
+			tipo:"noterminal",
+			nodo:"nodo"+idg,	
+			hijos:lista
+		}
+		idg++;
+		$$=Exp;
+	}
 	;
 

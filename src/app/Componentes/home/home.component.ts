@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {TraduccionService  } from "../../Servicios/traduccion.service";
 import { EjecucionService } from "../../Servicios/ejecucion.service";
 
-var parser = require('src/assets/1erJison/miGramatica.js');
+var parser = require('src/assets/1erJison/Ejecutar.js');
 
 
 
@@ -73,7 +73,6 @@ Ejecutar(){
   this.servEj.Ejecucion(this.salida);
   this.consola=this.servEj.getImprimir();
   this.lista=this.servEj.getErrores();
-
 }
 
 
@@ -81,5 +80,7 @@ Ejecutar(){
   ngOnInit(){    
     
   }
+
+
 
 }

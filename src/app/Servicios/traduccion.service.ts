@@ -235,6 +235,34 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                           stack[stack.length-1]+=id+Nodo.hijos[1].valor;
                           this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
                           stack[stack.length-1]+=Nodo.hijos[3].valor+Nodo.hijos[4].valor+"\n";
+                      }else if(Nodo.hijos.length==6){
+                        stack[stack.length-1]+=Nodo.hijos[0].valor;
+                        stack[stack.length-1]+=Nodo.hijos[1].valor;
+                        stack[stack.length-1]+=Nodo.hijos[2].valor;
+                        stack[stack.length-1]+=Nodo.hijos[3].valor;
+                        stack[stack.length-1]+=Nodo.hijos[4].valor;
+                        stack[stack.length-1]+=Nodo.hijos[5].valor+"\n";
+                      }
+                      else if(Nodo.hijos.length==7){
+                        if(Nodo.hijos[1].nombre=="cIzq"){
+                          stack[stack.length-1]+=Nodo.hijos[0].valor;
+                          stack[stack.length-1]+=Nodo.hijos[1].valor;
+                          this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+                          stack[stack.length-1]+=Nodo.hijos[3].valor;
+                          stack[stack.length-1]+=Nodo.hijos[4].valor;
+                          this.LenguajeTraducito(Nodo.hijos[5],idFun,stack,bloqFun);
+                          stack[stack.length-1]+=Nodo.hijos[6].valor+"\n";
+                        }else if(Nodo.hijos[1].nombre=="punto"){
+                          stack[stack.length-1]+=Nodo.hijos[0].valor;
+                          stack[stack.length-1]+=Nodo.hijos[1].valor;
+                          stack[stack.length-1]+=Nodo.hijos[2].valor;
+                          stack[stack.length-1]+=Nodo.hijos[3].valor;
+                          this.LenguajeTraducito(Nodo.hijos[4],idFun,stack,bloqFun);
+                          stack[stack.length-1]+=Nodo.hijos[5].valor;
+                          stack[stack.length-1]+=Nodo.hijos[6].valor+"\n"; 
+
+                        }
+                         
                       }
 
                 }else if(Nodo.hijos[0].nombre=="Rfunction"){    
@@ -615,7 +643,7 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
 
       break; 
       case "DecConst":
-        stack[stack.length-1]+=Nodo.hijos[0].valor;
+        stack[stack.length-1]+=Nodo.hijos[0].valor+" ";
         this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
         stack[stack.length-1]+=Nodo.hijos[2].valor+"\n";
         break; 
@@ -644,7 +672,14 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
         break;  
 
     case "Ntipo":
+          if(Nodo.hijos.length==1){
             stack[stack.length-1]+=Nodo.hijos[0].valor;
+          }else if(Nodo.hijos.length==3){
+            stack[stack.length-1]+=Nodo.hijos[0].valor;
+            stack[stack.length-1]+=Nodo.hijos[1].valor;
+            stack[stack.length-1]+=Nodo.hijos[2].valor;
+          }
+            
       break;
     
     case "LExp":
@@ -686,9 +721,9 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                   }
 
             }else if(Nodo.hijos.length==2){
-              stack[stack.length-1]+=Nodo.hijos[0].valor;
-              this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
-            
+                stack[stack.length-1]+=Nodo.hijos[0].valor;
+                this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
+
             }else if(Nodo.hijos.length==3){              
               if(Nodo.hijos[0].nombre=="Exp"){
 
@@ -696,8 +731,9 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                 stack[stack.length-1]+=Nodo.hijos[1].valor;
                 this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);  
               }else if(Nodo.hijos[0].nombre=="id"){
-                  
-                let id=Nodo.hijos[0].valor;
+                  if(Nodo.hijos[1].nombre=="pIzq"){
+
+                        let id=Nodo.hijos[0].valor;
                               for(let item of this.tbSimbolos){
                                     if(item.ambito==id){
                                      if(item.padres!=""){
@@ -715,9 +751,13 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
   
                               }  
 
-                  stack[stack.length-1]+=id+Nodo.hijos[1].valor;
+                          stack[stack.length-1]+=id+Nodo.hijos[1].valor;
+                          stack[stack.length-1]+=Nodo.hijos[2].valor;
+                }else if(Nodo.hijos[1].nombre=="punto"){
+                  stack[stack.length-1]+=Nodo.hijos[0].valor;
+                  stack[stack.length-1]+=Nodo.hijos[1].valor;
                   stack[stack.length-1]+=Nodo.hijos[2].valor;
-
+                }             
               }else if(Nodo.hijos[0].nombre=="Objeto"){ 
                   this.LenguajeTraducito(Nodo.hijos[0],idFun,stack,bloqFun);
                   stack[stack.length-1]+=Nodo.hijos[1].valor;
@@ -731,29 +771,41 @@ LenguajeTraducito(Nodo,idFun:string,stack,bloqFun){
                   stack[stack.length-1]+=Nodo.hijos[0].valor;
                   this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
                   stack[stack.length-1]+=Nodo.hijos[2].valor;
+              }else if(Nodo.hijos[0].nombre=="cIzq"){
+                stack[stack.length-1]+=Nodo.hijos[0].valor;
+                this.LenguajeTraducito(Nodo.hijos[1],idFun,stack,bloqFun);
+                stack[stack.length-1]+=Nodo.hijos[2].valor;
               }
 
             }else if(Nodo.hijos.length==4){
-              let id=Nodo.hijos[0].valor;
-              for(let item of this.tbSimbolos){
-                    if(item.ambito==id){
-                    if(item.padres!=""){
-                        if(item.padres.includes(",")){
-                            
-                          let lista=item.padres.split(",");
-                          for(let i=lista.length-1;i>=0;i--){
-                              id+="_"+lista[i];
+              if(Nodo.hijos[1].nombre=="pIzq"){
+                let id=Nodo.hijos[0].valor;
+                for(let item of this.tbSimbolos){
+                      if(item.ambito==id){
+                      if(item.padres!=""){
+                          if(item.padres.includes(",")){
+                              
+                            let lista=item.padres.split(",");
+                            for(let i=lista.length-1;i>=0;i--){
+                                id+="_"+lista[i];
+                            }
+                          }else{
+                            id+="_"+item.padres;
                           }
-                        }else{
-                          id+="_"+item.padres;
-                        }
-                    }   
-                    }
-
+                      }   
+                      }
+  
+                }
+                    stack[stack.length-1]+=id+Nodo.hijos[1].valor;
+                    this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+                    stack[stack.length-1]+=Nodo.hijos[3].valor;
+              }else if(Nodo.hijos[1].nombre=="cIzq"){
+                stack[stack.length-1]+=Nodo.hijos[0].valor;
+                stack[stack.length-1]+=Nodo.hijos[1].valor;
+                this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
+                stack[stack.length-1]+=Nodo.hijos[3].valor;
               }
-                  stack[stack.length-1]+=id+Nodo.hijos[1].valor;
-                  this.LenguajeTraducito(Nodo.hijos[2],idFun,stack,bloqFun);
-                  stack[stack.length-1]+=Nodo.hijos[3].valor;
+              
 
             }else if(Nodo.hijos.length==5){
                     if(Nodo.hijos[0].nombre=="Exp"){
