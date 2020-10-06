@@ -25,7 +25,9 @@ cadenaSimple			\'([^\']|[ntr])*\';
 
 entero					[0-9]+\b ;               	
 decimal 				[0-9]+("."[0-9]+)?\b;
-id						[a-zA-Z]+("_"|[a-zA-AZ]|[0-9])*\b;
+//id						[a-zA-Z]+("_"|[a-zA-AZ]|[0-9])*\b;
+letra				[a-zñA-ZÑ_ñÑáéíóúÁÉÍÓÚâêîôûäëïöüÂÊÎÔÛÄËÏÖÜ]
+id					({letra})({letra}|{entero})*
 
 
 %x string
