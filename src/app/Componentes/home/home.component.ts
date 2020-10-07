@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
 
 
 lista:any=[];
+listatb:any=[];
   
  Traducir(){
     try {
@@ -65,11 +66,14 @@ Graficar2(){
   this.servTr.Graficar(this.ast);
 }
 
-
+TablaSimbolos(){
+  this.listatb=this.servEj.getTbs();
+}
 
 Ejecutar(){
   this.consola="";
   this.lista=[];
+  this.listatb=[];
   this.servEj.Ejecucion(this.salida);
   this.consola=this.servEj.getImprimir();
   this.lista=this.servEj.getErrores();

@@ -29,7 +29,6 @@ tbGlobal={tabla:this.tbsimbolos,padre:null};
 
 
 Ejecucion(entrada:string){
-
 try {
   this.ast=parser.parse(entrada);
   if(this.ast.nombre!="error"){
@@ -51,6 +50,12 @@ try {
     console.log(error);
 }
 
+}
+
+
+getTbs(){
+
+return this.tbsimbolos;
 }
 
 
